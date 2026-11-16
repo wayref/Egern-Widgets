@@ -1,0 +1,33 @@
+# 用法：
+#   1. Egern 里 工具 → 模块 → +，填模块链接添加模块。
+#   2. 在模块设置里填城市和县（经纬度自动解析），小组件会自动出现在
+#      分析 → 小组件画廊的「模块小组件」区，再加到主屏幕即可。
+
+name: "我的天气"
+description: "我的天气：实时温度与今日最高/最低温，小号方块"
+icon: "cloud.sun.fill"
+
+env_schema:
+  CITY:
+    name: 城市
+    description: 显示的城市名
+  AREA:
+    name: 县 / 地区
+    description: 显示的县或地区名，经纬度由此自动解析
+  WIDGET_STYLE:
+    name: 样式
+    description: 纯黑背景：不透明黑底；毛玻璃纯黑：半透明黑底；毛玻璃透明：无背景，壁纸直接透出
+    options:
+      - 纯黑背景
+      - 毛玻璃纯黑
+      - 毛玻璃透明
+    default_value: "纯黑背景"
+
+scriptings:
+  - generic:
+      name: "我的天气"
+      script_url: "https://raw.githubusercontent.com/wayref/Egern-Widgets/main/我的天气-模块版.js"
+      timeout: 20
+
+widgets:
+  - name: "我的天气"

@@ -1,0 +1,30 @@
+# 用法：
+#   1. Egern 里 工具 → 模块 → +，填模块链接添加模块。
+#   2. 在模块设置里填城市名称（如北京市）；小组件会自动出现在
+#      分析 → 小组件画廊的「模块小组件」区，再加到主屏幕即可。
+
+name: "今日油价"
+description: "今日油价：92#/95#汽油与柴油价格，小号方块，6小时刷新"
+icon: "fuelpump.fill"
+
+env_schema:
+  CITY:
+    name: 城市
+    description: 城市名称，如北京市
+  WIDGET_STYLE:
+    name: 样式
+    description: 纯黑背景：不透明黑底；毛玻璃纯黑：半透明黑底；毛玻璃透明：无背景，壁纸直接透出
+    options:
+      - 纯黑背景
+      - 毛玻璃纯黑
+      - 毛玻璃透明
+    default_value: "纯黑背景"
+
+scriptings:
+  - generic:
+      name: "今日油价"
+      script_url: "https://raw.githubusercontent.com/wayref/Egern-Widgets/main/今日油价-模块版.js"
+      timeout: 20
+
+widgets:
+  - name: "今日油价"

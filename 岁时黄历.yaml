@@ -1,0 +1,44 @@
+# 用法：
+#   1. Egern 里 工具 → 模块 → +，填模块链接添加模块。
+#   2. 需要改顶部角标或教学周时，在模块设置里改；小组件会自动出现在
+#      分析 → 小组件画廊的「模块小组件」区，再加到主屏幕即可。
+
+name: "岁时黄历"
+description: "岁时黄历：农历、干支、宜忌、冲煞与节气，小/中/大号"
+icon: "calendar"
+
+env_schema:
+  ASTRO_OR_WEEK:
+    name: 顶部角标
+    description: 星座模式显示星座，可附带教学周；周次模式显示本年第几周及第几天
+    options:
+      - 星座
+      - 周次
+    default_value: "星座"
+  SHOW_TEACHING_WEEK:
+    name: 显示教学周
+    description: 仅星座模式下生效，需同时填写开学日期
+    options:
+      - "true"
+      - "false"
+    default_value: "true"
+  TEACHING_WEEK_START:
+    name: 开学日期
+    description: 教学周起始日期，格式 YYYY-MM-DD；留空不显示教学周
+  WIDGET_STYLE:
+    name: 样式
+    description: 纯黑背景：不透明黑底；毛玻璃纯黑：半透明黑底；毛玻璃透明：无背景，壁纸直接透出
+    options:
+      - 纯黑背景
+      - 毛玻璃纯黑
+      - 毛玻璃透明
+    default_value: "纯黑背景"
+
+scriptings:
+  - generic:
+      name: "岁时黄历"
+      script_url: "https://raw.githubusercontent.com/wayref/Egern-Widgets/main/岁时黄历-模块版.js"
+      timeout: 20
+
+widgets:
+  - name: "岁时黄历"

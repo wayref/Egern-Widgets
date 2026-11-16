@@ -1,0 +1,34 @@
+# 用法：
+#   1. Egern 里 工具 → 模块 → +，填模块链接添加模块。
+#   2. 在模块设置里填年龄；小组件会自动出现在
+#      分析 → 小组件画廊的「模块小组件」区，再加到主屏幕即可。
+
+name: "时间倒计时"
+description: "时间倒计时：今日/本周/本月/本年/人生进度条，小号方块"
+icon: "hourglass"
+
+env_schema:
+  AGE:
+    name: 年龄
+    description: 年龄，用于计算人生进度
+  LIFE_EXPECTANCY:
+    name: 预期寿命
+    description: 预期寿命，默认 80 岁
+    default_value: "80"
+  WIDGET_STYLE:
+    name: 样式
+    description: 纯黑背景：不透明黑底；毛玻璃纯黑：半透明黑底；毛玻璃透明：无背景，壁纸直接透出
+    options:
+      - 纯黑背景
+      - 毛玻璃纯黑
+      - 毛玻璃透明
+    default_value: "纯黑背景"
+
+scriptings:
+  - generic:
+      name: "时间倒计时"
+      script_url: "https://raw.githubusercontent.com/wayref/Egern-Widgets/main/时间倒计时-模块版.js"
+      timeout: 20
+
+widgets:
+  - name: "时间倒计时"
