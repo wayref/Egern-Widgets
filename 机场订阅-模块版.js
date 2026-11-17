@@ -290,8 +290,7 @@ export default async function (ctx) {
   const maxDisplay = isLarge ? 5 : (isMedium ? 3 : 2);
   const numSubs = Math.min(slots.length, maxDisplay);
 
-  // 自适应尺寸：大号组件根据机场数量调整字体和间距
-  // 大号 2 个机场：字体大、间距大；大号 5 个机场：字体小、间距紧
+  // 自适应尺寸：根据组件大小和机场数量调整字体和间距
   let sizing;
   if (isLarge) {
     if (numSubs <= 2) {
@@ -301,8 +300,21 @@ export default async function (ctx) {
     } else {
       sizing = { dotSize: 6, nameSize: "caption2", infoSize: "caption2", innerGap: 3, barHeight: 5, cardPadding: [1, 0], cardGap: 6, rootPadding: [12, 18, 8, 18], rootGap: 4, titleSize: "subheadline" };
     }
+  } else if (isMedium) {
+    if (numSubs === 1) {
+      sizing = { dotSize: 8, nameSize: "subheadline", infoSize: "caption1", innerGap: 6, barHeight: 6, cardPadding: [6, 0], cardGap: 12, rootPadding: [18, 20, 14, 20], rootGap: 8, titleSize: "headline" };
+    } else if (numSubs === 2) {
+      sizing = { dotSize: 7, nameSize: "caption1", infoSize: "caption2", innerGap: 5, barHeight: 5, cardPadding: [4, 0], cardGap: 10, rootPadding: [16, 18, 10, 18], rootGap: 6, titleSize: "subheadline" };
+    } else {
+      sizing = { dotSize: 6, nameSize: "caption2", infoSize: "caption2", innerGap: 4, barHeight: 5, cardPadding: [2, 0], cardGap: 8, rootPadding: [16, 18, 10, 18], rootGap: 5, titleSize: "subheadline" };
+    }
   } else {
-    sizing = { dotSize: 6, nameSize: "caption2", infoSize: "caption2", innerGap: 4, barHeight: 5, cardPadding: [2, 0], cardGap: 8, rootPadding: [16, 18, 10, 18], rootGap: 5, titleSize: "subheadline" };
+    // 小号
+    if (numSubs === 1) {
+      sizing = { dotSize: 8, nameSize: "subheadline", infoSize: "caption1", innerGap: 6, barHeight: 6, cardPadding: [8, 0], cardGap: 12, rootPadding: [18, 20, 14, 20], rootGap: 8, titleSize: "headline" };
+    } else {
+      sizing = { dotSize: 6, nameSize: "caption2", infoSize: "caption2", innerGap: 4, barHeight: 5, cardPadding: [2, 0], cardGap: 8, rootPadding: [16, 18, 10, 18], rootGap: 5, titleSize: "subheadline" };
+    }
   }
 
   return {
