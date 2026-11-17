@@ -1,0 +1,32 @@
+name: "机场订阅"
+description: "机场订阅流量监控：剩余流量、已用/总量、到期时间，支持小/中/大与锁屏尺寸"
+icon: "chart.pie.fill"
+
+env_schema:
+  SUBSCRIPTION_URL:
+    name: 订阅链接
+    description: 机场订阅链接（必填）
+  SUBSCRIPTION_NAME:
+    name: 订阅名称
+    description: 显示在小组件上的名字
+    default_value: "机场订阅"
+  REFRESH_HOURS:
+    name: 刷新间隔（小时）
+    description: 小组件刷新间隔，0.5~24 小时
+    default_value: "2"
+  WIDGET_STYLE:
+    name: 样式
+    description: 纯黑背景：不透明黑底；毛玻璃纯黑：半透明黑底；毛玻璃透明：无背景，壁纸直接透出
+    options:
+      - 纯黑背景
+      - 毛玻璃纯黑
+      - 毛玻璃透明
+    default_value: "纯黑背景"
+scriptings:
+  - generic:
+      name: "机场订阅"
+      script_url: "https://raw.githubusercontent.com/wayref/Egern-Widgets/main/机场订阅-模块版.js"
+      timeout: 20
+
+widgets:
+  - name: "机场订阅"
