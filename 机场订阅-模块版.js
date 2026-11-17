@@ -148,7 +148,7 @@ async function fetchInfo(ctx, slot) {
   return { name: slot.name, error: true };
 }
 
-function buildCard(result, ctx, isLarge) {
+function buildCard(result, ctx, sizing) {
   const { name, error, used, totalBytes, percent, expire } = result;
 
   // percent 是已用百分比，换算成剩余百分比
@@ -165,8 +165,8 @@ function buildCard(result, ctx, isLarge) {
   if (error) textColor = C.fail;
   else if (isLow) textColor = C.fail;
 
-  const innerGap = isLarge ? 3 : 4;
-  const barHeight = 5;
+  const innerGap = sizing.innerGap;
+  const barHeight = sizing.barHeight;
 
   if (error) {
     return {
@@ -174,7 +174,7 @@ function buildCard(result, ctx, isLarge) {
       direction: "row",
       alignItems: "center",
       gap: 6,
-      padding: [2, 0],
+      padding: sizing.cardPadding,
       children: [
         { type: "image", src: "sf-symbol:exclamationmark.circle.fill", width: 12, height: 12, color: C.fail },
         { type: "text", text: name, font: { size: "caption2", weight: "semibold" }, textColor: C.text, flex: 1 },
@@ -199,7 +199,7 @@ function buildCard(result, ctx, isLarge) {
     type: "stack",
     direction: "column",
     gap: innerGap,
-    padding: isLarge ? [1, 0] : [2, 0],
+    padding: sizing.cardPadding,
     children: [
       {
         type: "stack",
@@ -207,9 +207,9 @@ function buildCard(result, ctx, isLarge) {
         alignItems: "center",
         gap: 5,
         children: [
-          { type: "image", src: "sf-symbol:circle.fill", width: 6, height: 6, color: textColor },
-          { type: "text", text: name, font: { size: "caption2", weight: "semibold" }, textColor: C.text, flex: 1 },
-          { type: "text", text: `${Math.round(remainingPercent)}%`, font: { size: "caption2", weight: "bold" }, textColor: textColor },
+          { type: "image", src: "sf-symbol:circle.fill", width: sizing.dotSize, height: sizing.dotSize, color: textColor },
+          { type: "text", text: name, font: { size: sizing.nameSize, weight: "semibold" }, textColor: C.text, flex: 1 },
+          { type: "text", text: `${Math.round(remainingPercent)}%`, font: { size: sizing.nameSize, weight: "bold" }, textColor: textColor },
         ],
       },
       {
@@ -228,13 +228,13 @@ function buildCard(result, ctx, isLarge) {
         alignItems: "center",
         gap: 5,
         children: [
-          { type: "text", text: `${usedStr}/${totalStr}`, font: { size: "caption2", weight: "medium" }, textColor: C.secondary },
+          { type: "text", text: `${usedStr}/${totalStr}`, font: { size: sizing.infoSize, weight: "medium" }, textColor: C.secondary },
           { type: "spacer" },
           ...(ctx.widgetFamily === "systemSmall" ? [] : [
-            { type: "text", text: expireText, font: { size: "caption2", weight: "medium" }, textColor: C.dim },
+            { type: "text", text: expireText, font: { size: sizing.infoSize, weight: "medium" }, textColor: C.dim },
             { type: "spacer" },
           ]),
-          { type: "text", text: `剩${remainStr}`, font: { size: "caption2", weight: "semibold" }, textColor: isLow ? C.fail : C.accent },
+          { type: "text", text: `剩${remainStr}`, font: { size: sizing.infoSize, weight: "semibold" }, textColor: isLow ? C.fail : C.accent },
         ],
       },
     ],
@@ -290,11 +290,26 @@ export default async function (ctx) {
   const maxDisplay = isLarge ? 5 : (isMedium ? 3 : 2);
   const numSubs = Math.min(slots.length, maxDisplay);
 
+  // 自适应尺寸：大号组件根据机场数量调整字体和间距
+  // 大号 2 个机场：字体大、间距大；大号 5 个机场：字体小、间距紧
+  let sizing;
+  if (isLarge) {
+    if (numSubs <= 2) {
+      sizing = { dotSize: 8, nameSize: "subheadline", infoSize: "caption1", innerGap: 6, barHeight: 6, cardPadding: [6, 0], cardGap: 16, rootPadding: [18, 20, 14, 20], rootGap: 8, titleSize: "headline" };
+    } else if (numSubs === 3) {
+      sizing = { dotSize: 7, nameSize: "caption1", infoSize: "caption2", innerGap: 5, barHeight: 5, cardPadding: [4, 0], cardGap: 12, rootPadding: [16, 18, 10, 18], rootGap: 6, titleSize: "subheadline" };
+    } else {
+      sizing = { dotSize: 6, nameSize: "caption2", infoSize: "caption2", innerGap: 3, barHeight: 5, cardPadding: [1, 0], cardGap: 6, rootPadding: [12, 18, 8, 18], rootGap: 4, titleSize: "subheadline" };
+    }
+  } else {
+    sizing = { dotSize: 6, nameSize: "caption2", infoSize: "caption2", innerGap: 4, barHeight: 5, cardPadding: [2, 0], cardGap: 8, rootPadding: [16, 18, 10, 18], rootGap: 5, titleSize: "subheadline" };
+  }
+
   return {
     type: "widget",
     ...rootBackground(mode),
-    padding: isLarge ? [12, 18, 8, 18] : [16, 18, 10, 18],
-    gap: isLarge ? 4 : 5,
+    padding: sizing.rootPadding,
+    gap: sizing.rootGap,
     refreshAfter: refreshTime,
     children: [
       {
@@ -303,15 +318,15 @@ export default async function (ctx) {
         alignItems: "center",
         gap: 6,
         children: [
-          { type: "image", src: "sf-symbol:network", width: 12, height: 12, color: C.accent },
-          { type: "text", text: "机场订阅", font: { size: "subheadline", weight: "bold" }, textColor: C.text },
+          { type: "image", src: "sf-symbol:network", width: 14, height: 14, color: C.accent },
+          { type: "text", text: "机场订阅", font: { size: sizing.titleSize, weight: "bold" }, textColor: C.text },
         ],
       },
       {
         type: "stack",
         direction: "column",
-        gap: isLarge ? 6 : 8,
-        children: results.slice(0, maxDisplay).map((r) => buildCard(r, ctx, isLarge)),
+        gap: sizing.cardGap,
+        children: results.slice(0, maxDisplay).map((r) => buildCard(r, ctx, sizing)),
       },
     ],
   };
