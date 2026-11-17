@@ -1,15 +1,48 @@
 name: "机场订阅"
-description: "机场订阅流量监控：剩余流量、已用/总量、到期时间，支持小/中/大与锁屏尺寸"
+description: "机场订阅流量监控：最多 5 个机场，剩余流量、已用/总量、到期时间，支持小/中/大尺寸"
 icon: "chart.pie.fill"
 
 env_schema:
-  SUBSCRIPTION_URL:
-    name: 订阅链接
-    description: 机场订阅链接（必填）
-  SUBSCRIPTION_NAME:
-    name: 订阅名称
-    description: 显示在小组件上的名字
-    default_value: "机场订阅"
+  NAME1:
+    name: 机场1名称
+    description: 显示在卡片上的机场名称
+    default_value: ''
+  URL1:
+    name: 机场1订阅地址
+    description: 从机场后台复制的完整订阅链接（含 token）
+    default_value: ''
+  NAME2:
+    name: 机场2名称
+    description: 显示在卡片上的机场名称
+    default_value: ''
+  URL2:
+    name: 机场2订阅地址
+    description: 从机场后台复制的完整订阅链接（含 token）
+    default_value: ''
+  NAME3:
+    name: 机场3名称
+    description: 显示在卡片上的机场名称
+    default_value: ''
+  URL3:
+    name: 机场3订阅地址
+    description: 从机场后台复制的完整订阅链接（含 token）
+    default_value: ''
+  NAME4:
+    name: 机场4名称
+    description: 显示在卡片上的机场名称
+    default_value: ''
+  URL4:
+    name: 机场4订阅地址
+    description: 从机场后台复制的完整订阅链接（含 token）
+    default_value: ''
+  NAME5:
+    name: 机场5名称
+    description: 显示在卡片上的机场名称
+    default_value: ''
+  URL5:
+    name: 机场5订阅地址
+    description: 从机场后台复制的完整订阅链接（含 token）
+    default_value: ''
   REFRESH_HOURS:
     name: 刷新间隔（小时）
     description: 小组件刷新间隔，0.5~24 小时
@@ -26,7 +59,7 @@ scriptings:
   - generic:
       name: "机场订阅"
       script_url: "https://raw.githubusercontent.com/wayref/Egern-Widgets/main/机场订阅-模块版.js"
-      timeout: 20
+      timeout: 60
 
 widgets:
   - name: "机场订阅"
