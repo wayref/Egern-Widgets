@@ -216,11 +216,10 @@ function buildCard(result, ctx, isMediumThree) {
         type: "stack",
         direction: "row",
         height: barHeight,
-        backgroundColor: C.track,
         borderRadius: 3,
         children: [
-          { type: "stack", flex: Math.max(remainingPercent, 0.001), height: barHeight, backgroundColor: barColor, borderRadius: 3 },
-          { type: "spacer", flex: Math.max(100 - remainingPercent, 0.001) },
+          { type: "stack", flex: Math.max(remainingPercent, 1), height: barHeight, backgroundColor: barColor, borderRadius: 3 },
+          { type: "stack", flex: Math.max(100 - remainingPercent, 1), height: barHeight, backgroundColor: C.track, borderRadius: 3 },
         ],
       },
       {
