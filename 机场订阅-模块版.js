@@ -198,7 +198,7 @@ function buildCard(result, ctx, sizing) {
   return {
     type: "stack",
     direction: "column",
-    gap: innerGap,
+    gap: innerGap + 2,
     padding: sizing.cardPadding,
     children: [
       {
@@ -214,27 +214,34 @@ function buildCard(result, ctx, sizing) {
       },
       {
         type: "stack",
-        direction: "row",
-        height: barHeight,
-        borderRadius: 3,
+        direction: "column",
+        gap: 2,
         children: [
-          { type: "stack", flex: Math.max(remainingPercent, 1), height: barHeight, backgroundColor: barColor, borderRadius: 3 },
-          { type: "stack", flex: Math.max(100 - remainingPercent, 1), height: barHeight, backgroundColor: C.track, borderRadius: 3 },
-        ],
-      },
-      {
-        type: "stack",
-        direction: "row",
-        alignItems: "center",
-        gap: 5,
-        children: [
-          { type: "text", text: `${usedStr}/${totalStr}`, font: { size: sizing.infoSize, weight: "medium" }, textColor: C.secondary },
-          { type: "spacer" },
-          ...(ctx.widgetFamily === "systemSmall" ? [] : [
-            { type: "text", text: expireText, font: { size: sizing.infoSize, weight: "medium" }, textColor: C.dim },
-            { type: "spacer" },
-          ]),
-          { type: "text", text: `剩${remainStr}`, font: { size: sizing.infoSize, weight: "semibold" }, textColor: isLow ? C.fail : C.accent },
+          {
+            type: "stack",
+            direction: "row",
+            height: barHeight,
+            borderRadius: 3,
+            children: [
+              { type: "stack", flex: Math.max(remainingPercent, 1), height: barHeight, backgroundColor: barColor, borderRadius: 3 },
+              { type: "stack", flex: Math.max(100 - remainingPercent, 1), height: barHeight, backgroundColor: C.track, borderRadius: 3 },
+            ],
+          },
+          {
+            type: "stack",
+            direction: "row",
+            alignItems: "center",
+            gap: 5,
+            children: [
+              { type: "text", text: `${usedStr}/${totalStr}`, font: { size: sizing.infoSize, weight: "medium" }, textColor: C.secondary },
+              { type: "spacer" },
+              ...(ctx.widgetFamily === "systemSmall" ? [] : [
+                { type: "text", text: expireText, font: { size: sizing.infoSize, weight: "medium" }, textColor: C.dim },
+                { type: "spacer" },
+              ]),
+              { type: "text", text: `剩${remainStr}`, font: { size: sizing.infoSize, weight: "semibold" }, textColor: isLow ? C.fail : C.accent },
+            ],
+          },
         ],
       },
     ],
