@@ -151,8 +151,19 @@ async function fetchInfo(ctx, slot) {
 function buildCard(result, ctx, isMediumThree) {
   const { name, error, used, totalBytes, percent, expire } = result;
 
-  let statusColor = C.accent;
-  if (error) statusColor = C.fail;
+  // percent 是已用百分比，换算成剩余百分比
+  const remainingPercent = Math.max(0, Math.min(100, 100 - percent));
+  const isLow = remainingPercent < 20;
+
+  // 进度条颜色：剩余低于 20% 变红，否则蓝色
+  let barColor = C.accent;
+  if (error) barColor = C.fail;
+  else if (isLow) barColor = C.fail;
+
+  // 百分比和圆点颜色：剩余低于 20% 变红，否则绿色
+  let textColor = C.ok;
+  if (error) textColor = C.fail;
+  else if (isLow) textColor = C.fail;
 
   const innerGap = 4;
   const barHeight = 5;
@@ -172,7 +183,6 @@ function buildCard(result, ctx, isMediumThree) {
     };
   }
 
-  const progressPercent = Math.min(Math.max(percent, 0), 100);
   const usedStr = formatBytes(used);
   const totalStr = formatBytes(totalBytes);
   const remainStr = formatBytes(totalBytes - used);
@@ -197,19 +207,20 @@ function buildCard(result, ctx, isMediumThree) {
         alignItems: "center",
         gap: 5,
         children: [
-          { type: "image", src: "sf-symbol:circle.fill", width: 6, height: 6, color: statusColor },
+          { type: "image", src: "sf-symbol:circle.fill", width: 6, height: 6, color: textColor },
           { type: "text", text: name, font: { size: "caption2", weight: "semibold" }, textColor: C.text, flex: 1 },
-          { type: "text", text: `${Math.round(progressPercent)}%`, font: { size: "caption2", weight: "bold" }, textColor: statusColor },
+          { type: "text", text: `${Math.round(remainingPercent)}%`, font: { size: "caption2", weight: "bold" }, textColor: textColor },
         ],
       },
       {
         type: "stack",
         direction: "row",
         height: barHeight,
+        backgroundColor: C.track,
         borderRadius: 3,
         children: [
-          { type: "stack", flex: Math.max(progressPercent, 1), height: barHeight, backgroundColor: statusColor, borderRadius: 3 },
-          { type: "stack", flex: Math.max(100 - progressPercent, 1), height: barHeight, backgroundColor: C.track, borderRadius: 3 },
+          { type: "stack", flex: Math.max(remainingPercent, 0.001), height: barHeight, backgroundColor: barColor, borderRadius: 3 },
+          { type: "spacer", flex: Math.max(100 - remainingPercent, 0.001) },
         ],
       },
       {
@@ -224,7 +235,7 @@ function buildCard(result, ctx, isMediumThree) {
             { type: "text", text: expireText, font: { size: "caption2", weight: "medium" }, textColor: C.dim },
             { type: "spacer" },
           ]),
-          { type: "text", text: `剩${remainStr}`, font: { size: "caption2", weight: "semibold" }, textColor: C.ok },
+          { type: "text", text: `剩${remainStr}`, font: { size: "caption2", weight: "semibold" }, textColor: isLow ? C.fail : C.accent },
         ],
       },
     ],
@@ -235,8 +246,6 @@ export default async function (ctx) {
   const mode = styleMode(ctx);
   const refreshHours = numberEnv(ctx, 'REFRESH_HOURS', 2, 0.5, 24);
   const refreshTime = new Date(Date.now() + refreshHours * 60 * 60 * 1000).toISOString();
-  const now = new Date();
-  const timeStr = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
 
   const MAX = 5;
   const slots = [];
@@ -298,10 +307,7 @@ export default async function (ctx) {
         gap: 6,
         children: [
           { type: "image", src: "sf-symbol:network", width: 12, height: 12, color: C.accent },
-          { type: "text", text: "机场订阅", font: { size: "subheadline", weight: "bold" }, textColor: C.text },
-          { type: "spacer" },
-          { type: "image", src: "sf-symbol:arrow.clockwise", width: 12, height: 12, color: C.dim },
-          { type: "text", text: timeStr, font: { size: "caption2", weight: "medium" }, textColor: C.dim },
+          { type: "text", text: "机场订阅", font: { size: "subheadline", weight: "bold" }, textColor: C.text, flex: 1 },
         ],
       },
       {
