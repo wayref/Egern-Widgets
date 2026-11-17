@@ -209,7 +209,7 @@ function buildCard(result, ctx, sizing) {
         children: [
           { type: "image", src: "sf-symbol:circle.fill", width: sizing.dotSize, height: sizing.dotSize, color: textColor },
           { type: "text", text: name, font: { size: sizing.nameSize, weight: "semibold" }, textColor: C.text, flex: 1 },
-          { type: "text", text: `${Math.round(remainingPercent)}%`, font: { size: sizing.nameSize, weight: "bold" }, textColor: textColor },
+          { type: "text", text: `${Math.round(remainingPercent)}%`, font: { size: sizing.nameSize, weight: "bold" }, textColor: isLow ? C.fail : C.accent },
         ],
       },
       {
@@ -239,7 +239,7 @@ function buildCard(result, ctx, sizing) {
                 { type: "text", text: expireText, font: { size: sizing.infoSize, weight: "medium" }, textColor: C.dim },
                 { type: "spacer" },
               ]),
-              { type: "text", text: `剩${remainStr}`, font: { size: sizing.infoSize, weight: "semibold" }, textColor: isLow ? C.fail : C.accent },
+              { type: "text", text: `剩${remainStr}`, font: { size: sizing.infoSize, weight: "semibold" }, textColor: textColor },
             ],
           },
         ],
