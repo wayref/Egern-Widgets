@@ -1,14 +1,19 @@
 /**
- * Egern 小组件：机场订阅（单机场版）
+ * Egern 小组件：机场订阅（多机场版，最多 5 个）
  *
- * 改自 IBL3ND Sub_Widget，简化为单机场，匹配用户其他小组件格式。
- * 只需填机场名称和订阅链接，到期日期从订阅自动获取。
+ * 改自 IBL3ND Sub_Widget，匹配用户其他小组件格式。
+ * 每个机场只填名称和订阅链接，到期日期从订阅自动获取。
  *
  * Env：
- * - SUBSCRIPTION_NAME：机场名称
- * - SUBSCRIPTION_URL：机场订阅链接（必填）
+ * - NAME1-5：机场名称
+ * - URL1-5：机场订阅链接
  * - REFRESH_HOURS：刷新间隔（小时），默认 2
  * - WIDGET_STYLE：纯黑背景 / 毛玻璃纯黑 / 毛玻璃透明，默认纯黑背景
+ *
+ * 显示数量：
+ * - 小尺寸：2 条
+ * - 中尺寸：3 条
+ * - 大尺寸：5 条
  */
 
 const BG_COLOR = '#000000';
@@ -86,26 +91,28 @@ function formatBytes(bytes) {
   return `${value >= 10 ? Math.round(value) : value.toFixed(1)}${units[i]}`;
 }
 
-async function fetchInfo(ctx, url) {
-  const cacheKey = `sub_cache_${url}`;
+async function fetchInfo(ctx, slot) {
+  const cacheKey = `sub_cache_${slot.url}`;
   let cache = await ctx.storage.get(cacheKey);
+  let cacheData = null;
 
   if (cache) {
     try {
       const parsed = JSON.parse(cache);
       if (Date.now() - parsed.time < CACHE_TIME) {
-        return parsed.data;
+        return { ...parsed.data, name: slot.name };
       }
+      cacheData = parsed.data;
     } catch {}
   }
 
-  const urls = buildVariants(url);
+  const urls = buildVariants(slot.url);
 
   for (const method of ["head", "get"]) {
-    for (const u of urls) {
+    for (const url of urls) {
       for (const headers of UA_LIST) {
         try {
-          const resp = await ctx.http[method](u, { headers });
+          const resp = await ctx.http[method](url, { headers });
           const raw = resp.headers.get("subscription-userinfo") || "";
           const info = parseUserInfo(raw);
 
@@ -127,14 +134,111 @@ async function fetchInfo(ctx, url) {
               data: result,
             }));
 
-            return result;
+            return { ...result, name: slot.name };
           }
         } catch (_) {}
       }
     }
   }
 
-  return { error: true };
+  if (cacheData) {
+    return { ...cacheData, name: slot.name };
+  }
+
+  return { name: slot.name, error: true };
+}
+
+function buildCard(result, ctx, isMediumThree) {
+  const { name, error, used, totalBytes, percent, expire } = result;
+
+  let statusColor = C.ok;
+  if (error) statusColor = C.fail;
+  else if (percent >= 95) statusColor = C.fail;
+  else if (percent >= 80) statusColor = C.warn;
+  else if (percent >= 50) statusColor = C.accent;
+
+  const cardPadding = isMediumThree ? [3, 8, 3, 8] : [8, 10];
+  const innerGap = isMediumThree ? 2 : 5;
+  const barHeight = isMediumThree ? 3 : 5;
+
+  if (error) {
+    return {
+      type: "stack",
+      direction: "row",
+      alignItems: "center",
+      gap: 6,
+      padding: cardPadding,
+      backgroundColor: '#FF453A20',
+      borderRadius: 8,
+      children: [
+        { type: "image", src: "sf-symbol:exclamationmark.circle.fill", width: 12, height: 12, color: C.fail },
+        { type: "text", text: name, font: { size: "caption2", weight: "semibold" }, textColor: C.text, flex: 1 },
+        { type: "text", text: "失败", font: { size: "caption2", weight: "semibold" }, textColor: C.fail },
+      ],
+    };
+  }
+
+  const progressPercent = Math.min(Math.max(percent, 0), 100);
+  const usedStr = formatBytes(used);
+  const totalStr = formatBytes(totalBytes);
+  const remainStr = formatBytes(totalBytes - used);
+
+  let expireText = "永久有效";
+  if (expire && Number(expire) > 0) {
+    let ts = Number(expire);
+    if (ts < 1e12) ts *= 1000;
+    const d = new Date(ts);
+    expireText = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  }
+
+  return {
+    type: "stack",
+    direction: "column",
+    gap: innerGap,
+    padding: cardPadding,
+    backgroundColor: C.panel,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: C.hairline,
+    children: [
+      {
+        type: "stack",
+        direction: "row",
+        alignItems: "center",
+        gap: 5,
+        children: [
+          { type: "image", src: "sf-symbol:circle.fill", width: 6, height: 6, color: statusColor },
+          { type: "text", text: name, font: { size: "caption2", weight: "semibold" }, textColor: C.text, flex: 1 },
+          { type: "text", text: `${Math.round(progressPercent)}%`, font: { size: "caption2", weight: "bold" }, textColor: statusColor },
+        ],
+      },
+      {
+        type: "stack",
+        direction: "row",
+        height: barHeight,
+        borderRadius: 3,
+        children: [
+          { type: "stack", flex: Math.max(progressPercent, 1), height: barHeight, backgroundColor: statusColor, borderRadius: 3 },
+          { type: "stack", flex: Math.max(100 - progressPercent, 1), height: barHeight, backgroundColor: C.track, borderRadius: 3 },
+        ],
+      },
+      {
+        type: "stack",
+        direction: "row",
+        alignItems: "center",
+        gap: 5,
+        children: [
+          { type: "text", text: `${usedStr}/${totalStr}`, font: { size: "caption2", weight: "medium" }, textColor: C.secondary },
+          { type: "spacer" },
+          ...(ctx.widgetFamily === "systemSmall" ? [] : [
+            { type: "text", text: expireText, font: { size: "caption2", weight: "medium" }, textColor: C.dim },
+            { type: "spacer" },
+          ]),
+          { type: "text", text: `剩${remainStr}`, font: { size: "caption2", weight: "semibold" }, textColor: C.ok },
+        ],
+      },
+    ],
+  };
 }
 
 export default async function (ctx) {
@@ -144,10 +248,20 @@ export default async function (ctx) {
   const now = new Date();
   const timeStr = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
 
-  const name = String(ctx.env?.SUBSCRIPTION_NAME || '').trim() || '机场订阅';
-  const url = String(ctx.env?.SUBSCRIPTION_URL || '').trim();
+  const MAX = 5;
+  const slots = [];
 
-  if (!url) {
+  for (let i = 1; i <= MAX; i++) {
+    const url = (ctx.env[`URL${i}`] || "").trim();
+    if (!url) continue;
+
+    slots.push({
+      name: (ctx.env[`NAME${i}`] || "").trim() || "机场订阅",
+      url,
+    });
+  }
+
+  if (!slots.length) {
     return {
       type: "widget",
       ...rootBackground(mode),
@@ -163,65 +277,28 @@ export default async function (ctx) {
           children: [
             { type: "image", src: "sf-symbol:wifi.slash", width: 32, height: 32, color: C.fail },
             { type: "text", text: "未配置订阅", font: { size: "headline", weight: "semibold" }, textColor: C.text },
-            { type: "text", text: "请填写 SUBSCRIPTION_URL", font: { size: "caption1" }, textColor: C.dim },
           ],
         },
       ],
     };
   }
 
-  const result = await fetchInfo(ctx, url);
+  const results = await Promise.all(slots.map((s) => fetchInfo(ctx, s)));
 
-  if (result.error) {
-    return {
-      type: "widget",
-      ...rootBackground(mode),
-      padding: 16,
-      gap: 12,
-      refreshAfter: refreshTime,
-      children: [
-        {
-          type: "stack",
-          direction: "column",
-          gap: 10,
-          alignItems: "center",
-          children: [
-            { type: "image", src: "sf-symbol:exclamationmark.circle.fill", width: 32, height: 32, color: C.fail },
-            { type: "text", text: name, font: { size: "headline", weight: "semibold" }, textColor: C.text },
-            { type: "text", text: "获取失败", font: { size: "caption1" }, textColor: C.dim },
-          ],
-        },
-      ],
-    };
-  }
+  const widgetFamily = ctx.widgetFamily;
+  const isLarge = widgetFamily === "systemLarge";
+  const isMedium = widgetFamily === "systemMedium";
 
-  const { used, totalBytes, percent, expire } = result;
-  const progressPercent = Math.min(Math.max(percent, 0), 100);
-  const usedStr = formatBytes(used);
-  const totalStr = formatBytes(totalBytes);
-  const remainStr = formatBytes(totalBytes - used);
-
-  let statusColor = C.ok;
-  if (progressPercent >= 95) statusColor = C.fail;
-  else if (progressPercent >= 80) statusColor = C.warn;
-  else if (progressPercent >= 50) statusColor = C.accent;
-
-  let expireText = "永久有效";
-  if (expire && Number(expire) > 0) {
-    let ts = Number(expire);
-    if (ts < 1e12) ts *= 1000;
-    const d = new Date(ts);
-    expireText = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-  }
-
-  const family = ctx.widgetFamily;
-  const isSmall = family === "systemSmall";
+  const maxDisplay = isLarge ? 5 : (isMedium ? 3 : 2);
+  const numSubs = Math.min(slots.length, maxDisplay);
+  const isCompact = numSubs >= 2;
+  const isMediumThree = isMedium && numSubs === 3;
 
   return {
     type: "widget",
     ...rootBackground(mode),
-    padding: 16,
-    gap: 12,
+    padding: isMediumThree ? 6 : (isCompact ? 8 : 12),
+    gap: isMediumThree ? 4 : (isCompact ? 5 : 8),
     refreshAfter: refreshTime,
     children: [
       {
@@ -230,52 +307,18 @@ export default async function (ctx) {
         alignItems: "center",
         gap: 6,
         children: [
-          { type: "image", src: "sf-symbol:network", width: 14, height: 14, color: C.accent },
-          { type: "text", text: name, font: { size: "headline", weight: "bold" }, textColor: C.text, flex: 1 },
+          { type: "image", src: "sf-symbol:network", width: 12, height: 12, color: C.accent },
+          { type: "text", text: "机场订阅", font: { size: "subheadline", weight: "bold" }, textColor: C.text },
+          { type: "spacer" },
+          { type: "image", src: "sf-symbol:arrow.clockwise", width: 12, height: 12, color: C.dim },
           { type: "text", text: timeStr, font: { size: "caption2", weight: "medium" }, textColor: C.dim },
         ],
       },
       {
         type: "stack",
         direction: "column",
-        gap: 8,
-        children: [
-          {
-            type: "stack",
-            direction: "row",
-            alignItems: "center",
-            gap: 6,
-            children: [
-              { type: "text", text: `${Math.round(progressPercent)}%`, font: { size: "title2", weight: "bold" }, textColor: statusColor },
-              { type: "spacer" },
-              { type: "text", text: `剩 ${remainStr}`, font: { size: "subheadline", weight: "semibold" }, textColor: C.ok },
-            ],
-          },
-          {
-            type: "stack",
-            direction: "row",
-            height: 6,
-            borderRadius: 3,
-            backgroundColor: C.track,
-            children: [
-              { type: "stack", flex: Math.max(progressPercent, 1), height: 6, backgroundColor: statusColor, borderRadius: 3 },
-              { type: "stack", flex: Math.max(100 - progressPercent, 1), height: 6, backgroundColor: C.track, borderRadius: 3 },
-            ],
-          },
-          {
-            type: "stack",
-            direction: "row",
-            alignItems: "center",
-            gap: 6,
-            children: [
-              { type: "text", text: `已用 ${usedStr}`, font: { size: "caption1", weight: "medium" }, textColor: C.secondary },
-              { type: "text", text: "/", font: { size: "caption1" }, textColor: C.dim },
-              { type: "text", text: `总量 ${totalStr}`, font: { size: "caption1", weight: "medium" }, textColor: C.secondary },
-              { type: "spacer" },
-              { type: "text", text: expireText, font: { size: "caption1", weight: "medium" }, textColor: C.dim },
-            ],
-          },
-        ],
+        gap: isMediumThree ? 4 : 6,
+        children: results.slice(0, maxDisplay).map((r) => buildCard(r, ctx, isMediumThree)),
       },
     ],
   };
