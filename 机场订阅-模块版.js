@@ -151,14 +151,11 @@ async function fetchInfo(ctx, slot) {
 function buildCard(result, ctx, isMediumThree) {
   const { name, error, used, totalBytes, percent, expire } = result;
 
-  let statusColor = C.ok;
+  let statusColor = C.accent;
   if (error) statusColor = C.fail;
-  else if (percent >= 95) statusColor = C.fail;
-  else if (percent >= 80) statusColor = C.warn;
-  else if (percent >= 50) statusColor = C.accent;
 
-  const innerGap = isMediumThree ? 2 : 5;
-  const barHeight = isMediumThree ? 3 : 5;
+  const innerGap = 4;
+  const barHeight = 5;
 
   if (error) {
     return {
@@ -166,7 +163,7 @@ function buildCard(result, ctx, isMediumThree) {
       direction: "row",
       alignItems: "center",
       gap: 6,
-      padding: [4, 0],
+      padding: [2, 0],
       children: [
         { type: "image", src: "sf-symbol:exclamationmark.circle.fill", width: 12, height: 12, color: C.fail },
         { type: "text", text: name, font: { size: "caption2", weight: "semibold" }, textColor: C.text, flex: 1 },
@@ -192,7 +189,7 @@ function buildCard(result, ctx, isMediumThree) {
     type: "stack",
     direction: "column",
     gap: innerGap,
-    padding: [4, 0],
+    padding: [2, 0],
     children: [
       {
         type: "stack",
@@ -290,8 +287,8 @@ export default async function (ctx) {
   return {
     type: "widget",
     ...rootBackground(mode),
-    padding: isMediumThree ? 6 : (isCompact ? 8 : 12),
-    gap: isMediumThree ? 4 : (isCompact ? 5 : 8),
+    padding: [16, 18, 10, 18],
+    gap: 5,
     refreshAfter: refreshTime,
     children: [
       {
@@ -310,7 +307,7 @@ export default async function (ctx) {
       {
         type: "stack",
         direction: "column",
-        gap: isMediumThree ? 8 : 12,
+        gap: 8,
         children: results.slice(0, maxDisplay).map((r) => buildCard(r, ctx, isMediumThree)),
       },
     ],
