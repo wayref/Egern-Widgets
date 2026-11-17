@@ -148,7 +148,7 @@ async function fetchInfo(ctx, slot) {
   return { name: slot.name, error: true };
 }
 
-function buildCard(result, ctx, isMediumThree) {
+function buildCard(result, ctx, isLarge) {
   const { name, error, used, totalBytes, percent, expire } = result;
 
   // percent 是已用百分比，换算成剩余百分比
@@ -165,7 +165,7 @@ function buildCard(result, ctx, isMediumThree) {
   if (error) textColor = C.fail;
   else if (isLow) textColor = C.fail;
 
-  const innerGap = 4;
+  const innerGap = isLarge ? 3 : 4;
   const barHeight = 5;
 
   if (error) {
@@ -199,7 +199,7 @@ function buildCard(result, ctx, isMediumThree) {
     type: "stack",
     direction: "column",
     gap: innerGap,
-    padding: [2, 0],
+    padding: isLarge ? [1, 0] : [2, 0],
     children: [
       {
         type: "stack",
@@ -289,14 +289,12 @@ export default async function (ctx) {
 
   const maxDisplay = isLarge ? 5 : (isMedium ? 3 : 2);
   const numSubs = Math.min(slots.length, maxDisplay);
-  const isCompact = numSubs >= 2;
-  const isMediumThree = isMedium && numSubs === 3;
 
   return {
     type: "widget",
     ...rootBackground(mode),
-    padding: [16, 18, 10, 18],
-    gap: 5,
+    padding: isLarge ? [12, 18, 8, 18] : [16, 18, 10, 18],
+    gap: isLarge ? 4 : 5,
     refreshAfter: refreshTime,
     children: [
       {
@@ -312,8 +310,8 @@ export default async function (ctx) {
       {
         type: "stack",
         direction: "column",
-        gap: 8,
-        children: results.slice(0, maxDisplay).map((r) => buildCard(r, ctx, isMediumThree)),
+        gap: isLarge ? 6 : 8,
+        children: results.slice(0, maxDisplay).map((r) => buildCard(r, ctx, isLarge)),
       },
     ],
   };
