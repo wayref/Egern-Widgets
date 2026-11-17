@@ -157,7 +157,6 @@ function buildCard(result, ctx, isMediumThree) {
   else if (percent >= 80) statusColor = C.warn;
   else if (percent >= 50) statusColor = C.accent;
 
-  const cardPadding = isMediumThree ? [3, 8, 3, 8] : [8, 10];
   const innerGap = isMediumThree ? 2 : 5;
   const barHeight = isMediumThree ? 3 : 5;
 
@@ -167,9 +166,7 @@ function buildCard(result, ctx, isMediumThree) {
       direction: "row",
       alignItems: "center",
       gap: 6,
-      padding: cardPadding,
-      backgroundColor: '#FF453A20',
-      borderRadius: 8,
+      padding: [4, 0],
       children: [
         { type: "image", src: "sf-symbol:exclamationmark.circle.fill", width: 12, height: 12, color: C.fail },
         { type: "text", text: name, font: { size: "caption2", weight: "semibold" }, textColor: C.text, flex: 1 },
@@ -195,11 +192,7 @@ function buildCard(result, ctx, isMediumThree) {
     type: "stack",
     direction: "column",
     gap: innerGap,
-    padding: cardPadding,
-    backgroundColor: C.panel,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: C.hairline,
+    padding: [4, 0],
     children: [
       {
         type: "stack",
@@ -317,7 +310,7 @@ export default async function (ctx) {
       {
         type: "stack",
         direction: "column",
-        gap: isMediumThree ? 4 : 6,
+        gap: isMediumThree ? 8 : 12,
         children: results.slice(0, maxDisplay).map((r) => buildCard(r, ctx, isMediumThree)),
       },
     ],
