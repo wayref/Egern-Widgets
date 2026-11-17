@@ -307,7 +307,7 @@ export default async function (ctx) {
         gap: 6,
         children: [
           { type: "image", src: "sf-symbol:network", width: 12, height: 12, color: C.accent },
-          { type: "text", text: "机场订阅", font: { size: "subheadline", weight: "bold" }, textColor: C.text, flex: 1 },
+          { type: "text", text: "机场订阅", font: { size: "subheadline", weight: "bold" }, textColor: C.text },
         ],
       },
       {
