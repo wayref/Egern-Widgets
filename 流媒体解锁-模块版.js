@@ -8,17 +8,20 @@ export default async function(ctx) {
   // WIDGET_STYLE: 纯黑背景 / 毛玻璃纯黑 / 毛玻璃透明
   const style = (ctx.env.WIDGET_STYLE || '纯黑背景').trim();
 
-  // 服务开关：用户可手动选择测试哪些服务
-  const isEnabled = (key) => (ctx.env[key] || '开启').trim() !== '关闭';
-  const enabledServices = {
-    youtube: isEnabled('TEST_YOUTUBE'),
-    netflix: isEnabled('TEST_NETFLIX'),
-    tiktok: isEnabled('TEST_TIKTOK'),
-    spotify: isEnabled('TEST_SPOTIFY'),
-    chatgpt: isEnabled('TEST_CHATGPT'),
-    claude: isEnabled('TEST_CLAUDE'),
-    gemini: isEnabled('TEST_GEMINI'),
-    grok: isEnabled('TEST_GROK')
+  // 每个服务用哪个策略组测试，用户在环境变量里填策略组名，留空用默认
+  const getPolicy = (key) => {
+    const v = (ctx.env[key] || '').trim();
+    return v ? v : undefined;
+  };
+  const policies = {
+    youtube: getPolicy('POLICY_YOUTUBE'),
+    netflix: getPolicy('POLICY_NETFLIX'),
+    tiktok: getPolicy('POLICY_TIKTOK'),
+    spotify: getPolicy('POLICY_SPOTIFY'),
+    chatgpt: getPolicy('POLICY_CHATGPT'),
+    claude: getPolicy('POLICY_CLAUDE'),
+    gemini: getPolicy('POLICY_GEMINI'),
+    grok: getPolicy('POLICY_GROK')
   };
   const rootBackground = (mode) => {
     if (style === '毛玻璃透明') return {};
@@ -70,17 +73,18 @@ export default async function(ctx) {
     return { code: data.countryCode ? 'OK' : 'ERR', cc: data.countryCode || 'XX' };
   };
   
-  async function checkYouTube() { const res = await ctx.http.get(`https://www.youtube.com/generate_204`, { timeout: 3000, headers: commonHeaders }).catch(() => null); return { code: res?.status === 204 ? 'OK' : 'ERR' }; }
+  async function checkYouTube() { const opts = { timeout: 3000, headers: commonHeaders }; if (policies.youtube) opts.policy = policies.youtube; const res = await ctx.http.get(`https://www.youtube.com/generate_204`, opts).catch(() => null); return { code: res?.status === 204 ? 'OK' : 'ERR' }; }
   async function checkNetflix() { 
-    const res = await ctx.http.get(`https://www.netflix.com/`, { timeout: 5000, headers: commonHeaders, followRedirect: true }).catch(() => null);
+    const opts = { timeout: 5000, headers: commonHeaders, followRedirect: true }; if (policies.netflix) opts.policy = policies.netflix;
+    const res = await ctx.http.get(`https://www.netflix.com/`, opts).catch(() => null);
     return { code: res?.status === 200 ? 'OK' : 'ERR' };
   }
-  async function checkSpotify() { const res = await ctx.http.get(`https://open.spotify.com/`, { timeout: 3000, headers: commonHeaders, followRedirect: false }).catch(() => null); return { code: res && res.status === 200 ? 'OK' : 'ERR' }; }
-  async function checkChatGPT() { const res = await ctx.http.get(`https://chatgpt.com/`, { timeout: 3000, headers: commonHeaders, followRedirect: false }).catch(() => null); return { code: (res && res.status !== 403 && res.status !== 429) ? 'OK' : 'ERR' }; }
-  async function checkClaude() { const res = await ctx.http.get(`https://claude.ai/login`, { timeout: 3000, headers: commonHeaders, followRedirect: false }).catch(() => null); return { code: res && res.status === 200 ? 'OK' : 'ERR' }; }
-  async function checkGemini() { const res = await ctx.http.get(`https://gemini.google.com/app`, { timeout: 3000, headers: commonHeaders, followRedirect: false }).catch(() => null); return { code: res && res.status === 200 ? 'OK' : 'ERR' }; }
-  async function checkGrok() { const res = await ctx.http.get(`https://grok.com/`, { timeout: 3000, headers: commonHeaders, followRedirect: false }).catch(() => null); return { code: res && res.status === 200 ? 'OK' : 'ERR' }; }
-  async function checkTikTok() { const res = await ctx.http.get(`https://www.tiktok.com/`, { timeout: 3000, headers: commonHeaders, followRedirect: false }).catch(() => null); return { code: res && res.status === 200 ? 'OK' : 'ERR' }; }
+  async function checkSpotify() { const opts = { timeout: 3000, headers: commonHeaders, followRedirect: false }; if (policies.spotify) opts.policy = policies.spotify; const res = await ctx.http.get(`https://open.spotify.com/`, opts).catch(() => null); return { code: res && res.status === 200 ? 'OK' : 'ERR' }; }
+  async function checkChatGPT() { const opts = { timeout: 3000, headers: commonHeaders, followRedirect: false }; if (policies.chatgpt) opts.policy = policies.chatgpt; const res = await ctx.http.get(`https://chatgpt.com/`, opts).catch(() => null); return { code: (res && res.status !== 403 && res.status !== 429) ? 'OK' : 'ERR' }; }
+  async function checkClaude() { const opts = { timeout: 3000, headers: commonHeaders, followRedirect: false }; if (policies.claude) opts.policy = policies.claude; const res = await ctx.http.get(`https://claude.ai/login`, opts).catch(() => null); return { code: res && res.status === 200 ? 'OK' : 'ERR' }; }
+  async function checkGemini() { const opts = { timeout: 3000, headers: commonHeaders, followRedirect: false }; if (policies.gemini) opts.policy = policies.gemini; const res = await ctx.http.get(`https://gemini.google.com/app`, opts).catch(() => null); return { code: res && res.status === 200 ? 'OK' : 'ERR' }; }
+  async function checkGrok() { const opts = { timeout: 3000, headers: commonHeaders, followRedirect: false }; if (policies.grok) opts.policy = policies.grok; const res = await ctx.http.get(`https://grok.com/`, opts).catch(() => null); return { code: res && res.status === 200 ? 'OK' : 'ERR' }; }
+  async function checkTikTok() { const opts = { timeout: 3000, headers: commonHeaders, followRedirect: false }; if (policies.tiktok) opts.policy = policies.tiktok; const res = await ctx.http.get(`https://www.tiktok.com/`, opts).catch(() => null); return { code: res && res.status === 200 ? 'OK' : 'ERR' }; }
 
   // 总超时 10 秒，防止某个服务卡住
   const allChecks = await Promise.race([
@@ -103,15 +107,11 @@ export default async function(ctx) {
   };
   
   const allServices = [
-    { name: 'YouTube', info: resultInfo(youtube), enabled: enabledServices.youtube },
-    { name: 'Netflix', info: resultInfo(netflix), enabled: enabledServices.netflix },
-    { name: 'TikTok', info: resultInfo(tiktok), enabled: enabledServices.tiktok },
-    { name: 'Spotify', info: resultInfo(spotify), enabled: enabledServices.spotify },
-    { name: 'ChatGPT', info: resultInfo(chatgpt), enabled: enabledServices.chatgpt },
-    { name: 'Claude', info: resultInfo(claude), enabled: enabledServices.claude },
-    { name: 'Gemini', info: resultInfo(gemini), enabled: enabledServices.gemini },
-    { name: 'Grok', info: resultInfo(grok), enabled: enabledServices.grok }
-  ].filter(s => s.enabled);
+    { name: 'YouTube', info: resultInfo(youtube) }, { name: 'Netflix', info: resultInfo(netflix) },
+    { name: 'TikTok', info: resultInfo(tiktok) }, { name: 'Spotify', info: resultInfo(spotify) },
+    { name: 'ChatGPT', info: resultInfo(chatgpt) }, { name: 'Claude', info: resultInfo(claude) },
+    { name: 'Gemini', info: resultInfo(gemini) }, { name: 'Grok', info: resultInfo(grok) }
+  ];
   
   const okCount = allServices.filter(s => s.info.available).length;
   const lockedCount = allServices.length - okCount;
@@ -204,10 +204,8 @@ export default async function(ctx) {
       ]
     });
     const rows = [];
-    for (let i = 0; i < allServices.length; i += 2) {
-      const rowChildren = [LargeServiceBlock(allServices[i])];
-      if (i + 1 < allServices.length) rowChildren.push(LargeServiceBlock(allServices[i+1]));
-      rows.push({ type: 'stack', direction: 'row', gap: 10, flex: 1, justifyContent: 'space-between', children: rowChildren });
+    for (let i = 0; i < 8; i += 2) {
+      rows.push({ type: 'stack', direction: 'row', gap: 10, flex: 1, justifyContent: 'space-between', children: [LargeServiceBlock(allServices[i]), LargeServiceBlock(allServices[i+1])] });
     }
     return {
       type: 'widget', ...rootBackground(), padding: [16, 16, 16, 16], gap: 10,
