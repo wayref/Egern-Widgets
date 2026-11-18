@@ -177,8 +177,8 @@ function buildCard(result, ctx, sizing) {
       padding: sizing.cardPadding,
       children: [
         { type: "image", src: "sf-symbol:exclamationmark.circle.fill", width: 12, height: 12, color: C.fail },
-        { type: "text", text: name, font: { size: "caption2", weight: "semibold" }, textColor: C.text, flex: 1 },
-        { type: "text", text: "失败", font: { size: "caption2", weight: "semibold" }, textColor: C.fail },
+        { type: "text", text: name, font: { size: sizing.nameSize, weight: "semibold" }, textColor: C.text, flex: 1 },
+        { type: "text", text: "失败", font: { size: sizing.nameSize, weight: "semibold" }, textColor: C.fail },
       ],
     };
   }
