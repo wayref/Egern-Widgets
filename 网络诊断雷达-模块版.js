@@ -294,10 +294,10 @@ const rowFontSize = Math.round(12 * scale);
 const headerFontSize = Math.round(18 * scale);
 const rowIconSize = Math.round(13 * scale);
 const headerIconSize = Math.round(18 * scale);
-const rowGap = isLarge ? 18 : (isSmall ? 8 : 12);
+const rowGap = isLarge ? 18 : (isSmall ? 8 : 8.5);
 const colGap = isLarge ? 16 : 10;
-const padding = isLarge ? 20 : (isSmall ? 12 : 16);
-const headerSpacer = isLarge ? 20 : (isSmall ? 10 : 16);
+const padding = isLarge ? 20 : (isSmall ? 12 : 14);
+const headerSpacer = isLarge ? 20 : (isSmall ? 10 : 12);
 
 // 大号用放大的 Row 组件
 const RowScaled = (ic, icCol, label, val, valCol) => ({
