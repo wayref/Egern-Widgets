@@ -274,7 +274,7 @@ children: [
 
 { type: 'stack', direction: 'row', gap: 10, children: [
 // ：本地网络
-{ type: 'stack', direction: 'column', gap: 4.5, flex: 1, children: [
+{ type: 'stack', direction: 'column', gap: 8.5, flex: 1, children: [
 Row(netIcon, C.cpu, "环境", netName, C.cpu),
 Row("wifi.router.fill", C.cyan, "网关", gateway, C.cyan),
 Row("iphone", C.netRx, "内网", fmtIP(localIp), C.netRx),
@@ -287,7 +287,7 @@ Row("timer", latCol(localDelay), "延迟", localDelay, latCol(localDelay)),
 { type: 'stack', width: 0.5, backgroundColor: C.barBg},
 
 // ：中转代理出口
-{ type: 'stack', direction: 'column', gap: 4.5, flex: 1, children: [
+{ type: 'stack', direction: 'column', gap: 8.5, flex: 1, children: [
 Row("paperplane.fill", C.mem, "出口", fmtIP(finalProxy.ip), C.mem),
 Row("mappin.and.ellipse", C.red, "落地", finalProxy.loc, C.text),
 Row("server.rack", C.cpu, "厂商", finalProxy.isp, C.cpu),
