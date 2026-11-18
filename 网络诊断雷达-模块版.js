@@ -277,9 +277,9 @@ const Row = (ic, icCol, label, val, valCol) => ({
 type: 'stack', direction: 'row', alignItems: 'center', gap: 5,
 children: [
 { type: 'image', src: `sf-symbol:${ic}`, color: icCol, width: 13, height: 13},
-{ type: 'text', text: label, font: { size: 12, weight: 'regular'}, textColor: C.dim, maxLines: 1, minScale: 0.85},
+{ type: 'text', text: label, font: { size: 13, weight: 'regular'}, textColor: C.dim, maxLines: 1, minScale: 0.85},
 { type: 'spacer'},
-{ type: 'text', text: val, font: { size: 12, weight: 'medium'}, textColor: valCol, maxLines: 1, minScale: 0.75}
+{ type: 'text', text: val, font: { size: 13, weight: 'medium'}, textColor: valCol, maxLines: 1, minScale: 0.75}
 ]
 });
 
