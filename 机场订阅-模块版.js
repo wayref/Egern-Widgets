@@ -305,7 +305,7 @@ export default async function (ctx) {
     } else if (numSubs === 3) {
       sizing = { dotSize: 7, nameSize: "caption1", infoSize: "caption2", innerGap: 5, barHeight: 5, cardPadding: [4, 0], cardGap: 12, rootPadding: [16, 18, 10, 18], rootGap: 6, titleSize: "subheadline" };
     } else {
-      sizing = { dotSize: 6, nameSize: "caption2", infoSize: "caption2", innerGap: 3, barHeight: 5, cardPadding: [1, 0], cardGap: 6, rootPadding: [12, 18, 8, 18], rootGap: 4, titleSize: "subheadline" };
+      sizing = { dotSize: 7, nameSize: "caption1", infoSize: "caption1", innerGap: 4, barHeight: 6, cardPadding: [3, 0], cardGap: 10, rootPadding: [16, 20, 12, 20], rootGap: 6, titleSize: "headline" };
     }
   } else if (isMedium) {
     if (numSubs === 1) {
