@@ -14,6 +14,10 @@ export default async function(ctx) {
     const s = (v === undefined || v === null) ? '' : String(v).trim();
     return s === '' ? undefined : s;
   }
+
+  // 刷新间隔：从环境变量 REFRESH_HOURS 读，默认 1 小时，计算下次刷新时间
+  const refreshHours = parseFloat(envOf('REFRESH_HOURS') || '1') || 1;
+  const refreshAfter = new Date(Date.now() + refreshHours * 60 * 60 * 1000).toISOString();
   const rootBackground = (mode) => {
     if (style === '毛玻璃透明') return {};
     if (style === '毛玻璃纯黑') return { backgroundColor: 'rgba(0,0,0,0.55)' };
@@ -132,7 +136,7 @@ export default async function(ctx) {
 
   const renderSmall = () => {
     return {
-      type: 'widget', ...rootBackground(), padding: [10, 14, 10, 14],
+      type: 'widget', ...rootBackground(), padding: [10, 14, 10, 14], refreshAfter,
       children: [
         { type: 'stack', direction: 'row', alignItems: 'center', padding: [0, 0, 4, 0], children: [
           { type: 'image', src: 'sf-symbol:antenna.radiowaves.left.and.right', color: lockedCount === 0 ? C.ok : C.accent, width: 12, height: 12 },
@@ -172,7 +176,7 @@ export default async function(ctx) {
       ]
     });
     return {
-      type: 'widget', ...rootBackground(), padding: [16, 14, 16, 14], gap: 14,
+      type: 'widget', ...rootBackground(), padding: [16, 14, 16, 14], gap: 14, refreshAfter,
       children: [
         renderHeader(),
         { type: 'stack', direction: 'column', gap: 16, flex: 1, justifyContent: 'center', children: [
@@ -206,7 +210,7 @@ export default async function(ctx) {
       rows.push({ type: 'stack', direction: 'row', gap: 10, flex: 1, justifyContent: 'space-between', children: [LargeServiceBlock(allServices[i]), LargeServiceBlock(allServices[i+1])] });
     }
     return {
-      type: 'widget', ...rootBackground(), padding: [16, 16, 16, 16], gap: 10,
+      type: 'widget', ...rootBackground(), padding: [16, 16, 16, 16], gap: 10, refreshAfter,
       children: [
         renderHeader(),
         { type: 'stack', direction: 'column', gap: 10, flex: 1, children: rows }
