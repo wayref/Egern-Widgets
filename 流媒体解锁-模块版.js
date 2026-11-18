@@ -142,9 +142,9 @@ export default async function(ctx) {
     const MediumServiceBlock = (item) => ({
       type: 'stack', direction: 'column', flex: 1, gap: 4,
       children: [
-        { type: 'stack', direction: 'row', alignItems: 'center', children: [
-          { type: 'text', text: item.name, font: { size: 11, weight: 'semibold' }, textColor: C.text, flex: 1, maxLines: 1 },
-          { type: 'stack', width: 6, height: 6, borderRadius: 3, backgroundColor: item.info.available ? C.ok : C.fail }
+        { type: 'stack', direction: 'row', alignItems: 'center', gap: 6, children: [
+          { type: 'stack', width: 6, height: 6, borderRadius: 3, backgroundColor: item.info.available ? C.ok : C.fail },
+          { type: 'text', text: item.name, font: { size: 11, weight: 'semibold' }, textColor: C.text, flex: 1, maxLines: 1 }
         ]},
         { type: 'stack', direction: 'row', alignItems: 'center', gap: 4, children: [
           { type: 'text', text: item.info.region, font: { size: 10, weight: 'medium', design: 'monospaced' }, textColor: C.dim },
@@ -168,9 +168,9 @@ export default async function(ctx) {
     const LargeServiceBlock = (item) => ({
       type: 'stack', direction: 'column', flex: 1, gap: 6,
       children: [
-        { type: 'stack', direction: 'row', alignItems: 'center', children: [
-          { type: 'text', text: item.name, font: { size: 13, weight: 'semibold' }, textColor: C.text, flex: 1 },
-          { type: 'stack', width: 7, height: 7, borderRadius: 3.5, backgroundColor: item.info.available ? C.ok : C.fail }
+        { type: 'stack', direction: 'row', alignItems: 'center', gap: 6, children: [
+          { type: 'stack', width: 7, height: 7, borderRadius: 3.5, backgroundColor: item.info.available ? C.ok : C.fail },
+          { type: 'text', text: item.name, font: { size: 13, weight: 'semibold' }, textColor: C.text, flex: 1 }
         ]},
         { type: 'stack', direction: 'row', alignItems: 'center', gap: 6, children: [
           { type: 'text', text: `${getFlagEmoji(item.info.region)} ${item.info.region}`, font: { size: 11, weight: 'medium', design: 'monospaced' }, textColor: C.dim },
