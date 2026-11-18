@@ -127,9 +127,19 @@ export default async function(ctx) {
   };
 
   // ⚡ 关键修改：移除 v4 限制，允许获取 IPv6 落地出口地址
+  // 出口检测用哪个策略组，用户在环境变量 POLICY_EXIT 里填，留空用默认
+  function envOf(key) {
+    const v = ctx.env ? ctx.env[key] : undefined;
+    const s = (v === undefined || v === null) ? '' : String(v).trim();
+    return s === '' ? undefined : s;
+  }
+  const exitPolicy = envOf('POLICY_EXIT');
+
   const fetchProxyRawIP = async () => {
     try {
-      const res = await ctx.http.get('https://ident.me', { timeout: 3000 });
+      const opts = { timeout: 3000 };
+      if (exitPolicy) opts.policy = exitPolicy;
+      const res = await ctx.http.get('https://ident.me', opts);
       const ip = (await res.text())?.trim();
       return ip || null;
     } catch { return null; }
@@ -142,7 +152,12 @@ export default async function(ctx) {
 
   const fetchProxyDelay = async () => {
     const start = Date.now();
-    try { await ctx.http.get('https://cp.cloudflare.com/generate_204', { timeout: 2000 }); return `${Date.now() - start} ms`; } catch (e) { return "超时"; }
+    try { 
+      const opts = { timeout: 2000 };
+      if (exitPolicy) opts.policy = exitPolicy;
+      await ctx.http.get('https://cp.cloudflare.com/generate_204', opts); 
+      return `${Date.now() - start} ms`; 
+    } catch (e) { return "超时"; }
   };
 
   // 执行第一阶段并发请求
@@ -154,10 +169,20 @@ export default async function(ctx) {
   const currentIP = proxyRawIP || "获取失败";
 
   const fetchProxyFull = async () => {
-    try { const res = await ctx.http.get(`https://ipapi.co/${currentIP}/json/`, { timeout: 4000 }); return safeParse(await res.text()); } catch { return {}; }
+    try { 
+      const opts = { timeout: 4000 };
+      if (exitPolicy) opts.policy = exitPolicy;
+      const res = await ctx.http.get(`https://ipapi.co/${currentIP}/json/`, opts); 
+      return safeParse(await res.text()); 
+    } catch { return {}; }
   };
   const fetchPurityFull = async () => {
-    try { const res = await ctx.http.get('https://my.ippure.com/v1/info', { timeout: 4000 }); return safeParse(await res.text()); } catch { return {}; }
+    try { 
+      const opts = { timeout: 4000 };
+      if (exitPolicy) opts.policy = exitPolicy;
+      const res = await ctx.http.get('https://my.ippure.com/v1/info', opts); 
+      return safeParse(await res.text()); 
+    } catch { return {}; }
   };
 
   const [fullData, purData] = await Promise.all([
