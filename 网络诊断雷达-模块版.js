@@ -145,62 +145,6 @@ export default async function(ctx) {
     try { await ctx.http.get('https://cp.cloudflare.com/generate_204', { timeout: 2000 }); return `${Date.now() - start} ms`; } catch (e) { return "超时"; }
   };
 
-  // --- 流媒体与 AI 解锁检测逻辑 ---
-  async function checkNetflix() {
-    try {
-      const checkStatus = async (id) => {
-        const r = await ctx.http.get(`https://www.netflix.com/title/${id}`, { timeout: 3500, headers: commonHeaders, followRedirect: false }).catch(() => null);
-        return r ? r.status : 0;
-      };
-      return (await checkStatus(70143836)) === 200 ? "OK" : ((await checkStatus(81280792)) === 200 ? "🍿" : "❌");
-    } catch { return "❌"; }
-  }
-
-  async function checkDisney() {
-    try {
-      const res = await ctx.http.get("https://www.disneyplus.com", { timeout: 3500, headers: commonHeaders, followRedirect: false }).catch(() => null);
-      if (!res || res.status === 403) return "❌";
-      return (res.headers?.location || res.headers?.Location || "").includes("unavailable") ? "❌" : "OK";
-    } catch { return "❌"; }
-  }
-
-  async function checkTikTok() {
-    try {
-      const r = await ctx.http.get("https://www.tiktok.com/explore", { timeout: 3500, headers: commonHeaders, followRedirect: false }).catch(() => null);
-      if (!r || r.status === 403 || r.status === 401) return "❌";
-      const body = await readBody(r);
-      if (body.includes("Access Denied") || body.includes("Please wait...")) return "❌";
-      const m = body.match(/"region":"([A-Z]{2})"/i);
-      return m?.[1] ? m[1].toUpperCase() : "OK";
-    } catch { return "❌"; }
-  }
-
-  async function checkChatGPT() {
-    try {
-      const traceRes = await ctx.http.get("https://chatgpt.com/cdn-cgi/trace", { timeout: 3000 }).catch(() => null);
-      const m = (await readBody(traceRes))?.match(/loc=([A-Z]{2})/);
-      return m?.[1] ? m[1].toUpperCase() : "OK";
-    } catch { return "❌"; }
-  }
-
-  async function checkClaude() {
-    try {
-      const res = await ctx.http.get("https://claude.ai/login", { timeout: 4000, headers: commonHeaders }).catch(() => null);
-      if (!res) return "❌";
-      const body = await readBody(res);
-      if (body.includes("App unavailable") || body.includes("certain regions")) return "❌";
-      if (res.status === 403 && (body.includes("cf-turnstile") || body.includes("Just a moment"))) return "OK";
-      return (res.status === 200 || res.status === 301 || res.status === 302) ? "OK" : "❌";
-    } catch { return "❌"; }
-  }
-
-  async function checkGemini() {
-    try {
-      const res = await ctx.http.get("https://gemini.google.com/app", { timeout: 3500, headers: commonHeaders, followRedirect: false }).catch(() => null);
-      return (!res || (res.headers?.location || res.headers?.Location || "").includes("faq")) ? "❌" : "OK";
-    } catch { return "❌"; }
-  }
-
   // 执行第一阶段并发请求
   const [localData, proxyRawIP, localDelay, proxyDelay] = await Promise.all([
     fetchLocal(), fetchProxyRawIP(), fetchLocalDelay(), fetchProxyDelay()
@@ -216,9 +160,8 @@ export default async function(ctx) {
     try { const res = await ctx.http.get('https://my.ippure.com/v1/info', { timeout: 4000 }); return safeParse(await res.text()); } catch { return {}; }
   };
 
-  const [fullData, purData, rNF, rDP, rTK, rGPT, rCL, rGM] = await Promise.all([
-    fetchProxyFull(), fetchPurityFull(),
-    checkNetflix(), checkDisney(), checkTikTok(), checkChatGPT(), checkClaude(), checkGemini()
+  const [fullData, purData] = await Promise.all([
+    fetchProxyFull(), fetchPurityFull()
   ]);
 
   const cc = fullData.country_code || "XX";
@@ -285,7 +228,6 @@ isp: fmtProxyISP(fullData.org || fullData.asn),
 cc: cc
 };
 const finalPurity = purData;
-const finalUnlocks = { rNF, rDP, rTK, rGPT, rCL, rGM};
 
 // 5. 数据清洗与规范化转换
 const isRes = finalPurity?.isResidential;
@@ -300,16 +242,6 @@ if (risk >= 70) { riskTxt = `高危 (${risk})`; riskCol = C.red; riskIc = "xmark
 else if (risk >= 30) { riskTxt = `中危 (${risk})`; riskCol = C.disk; riskIc = "exclamationmark.triangle.fill";}
 else { riskTxt = `纯净 (${risk})`; riskCol = C.netRx; riskIc = "checkmark.shield.fill";}
 }
-
-const fmtUnlock = (name, res, cc) => {
-let flag = "🚫";
-if (res === "🍿" || res === "APP") flag = res;
-else if (res!== "❌") flag = getFlag(res === "OK" || res === "XX"? cc: res);
-return `${name} ${flag}`;
-};
-
-const textVideo = `${fmtUnlock('NF', finalUnlocks.rNF, finalProxy.cc)} ${fmtUnlock('DP', finalUnlocks.rDP, finalProxy.cc)} ${fmtUnlock('TK', finalUnlocks.rTK, finalProxy.cc)}`;
-const textAI = `${fmtUnlock('GPT', finalUnlocks.rGPT, finalProxy.cc)} ${fmtUnlock('CL', finalUnlocks.rCL, finalProxy.cc)} ${fmtUnlock('GM', finalUnlocks.rGM, finalProxy.cc)}`;
 
 const now = new Date();
 const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
@@ -349,7 +281,6 @@ Row("iphone", C.netRx, "内网", fmtIP(localIp), C.netRx),
 Row("globe.asia.australia.fill", C.cpu, "公网", fmtIP(localData.ip), C.cpu),
 Row("map.fill", C.disk, "位置", localData.loc, C.disk),
 Row("timer", latCol(localDelay), "延迟", localDelay, latCol(localDelay)),
-Row("play.tv.fill", C.mem, "影视", textVideo, C.text)
 ]},
 
 // 中央垂直分割线
@@ -363,7 +294,6 @@ Row("server.rack", C.cpu, "厂商", finalProxy.isp, C.cpu),
 Row(nativeIc, nativeCol, "属性", nativeText, nativeCol),
 Row(riskIc, riskCol, "纯净", riskTxt, riskCol),
 Row("timer", latCol(proxyDelay), "延迟", proxyDelay, latCol(proxyDelay)),
-Row("cpu", C.netRx, "AI", textAI, C.text)
 ]}
 ]},
 { type: 'spacer'}
