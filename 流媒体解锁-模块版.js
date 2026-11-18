@@ -159,8 +159,8 @@ export default async function(ctx) {
       children: [
         renderHeader(),
         { type: 'stack', direction: 'column', gap: 8, flex: 1, children: [
-          { type: 'stack', direction: 'row', gap: 6, children: allServices.slice(0, 4).map(MediumServiceBlock) },
-          { type: 'stack', direction: 'row', gap: 6, children: allServices.slice(4, 8).map(MediumServiceBlock) }
+          { type: 'stack', direction: 'row', gap: 6, flex: 1, children: allServices.slice(0, 4).map(MediumServiceBlock) },
+          { type: 'stack', direction: 'row', gap: 6, flex: 1, children: allServices.slice(4, 8).map(MediumServiceBlock) }
         ]}
       ]
     };
