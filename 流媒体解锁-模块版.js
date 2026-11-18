@@ -140,7 +140,7 @@ export default async function(ctx) {
 
   const renderMedium = () => {
     const MediumServiceBlock = (item) => ({
-      type: 'stack', direction: 'column', flex: 1, gap: 4, alignItems: 'start',
+      type: 'stack', direction: 'column', flex: 1, gap: 4,
       children: [
         { type: 'stack', direction: 'row', alignItems: 'center', children: [
           { type: 'stack', width: 6, height: 6, borderRadius: 3, backgroundColor: item.info.available ? C.ok : C.fail },
@@ -150,7 +150,8 @@ export default async function(ctx) {
         { type: 'stack', direction: 'row', alignItems: 'center', children: [
           { type: 'text', text: item.info.region, font: { size: 10, weight: 'medium', design: 'monospaced' }, textColor: C.dim, textAlign: 'left' },
           { type: 'stack', width: 4 },
-          { type: 'text', text: `${item.info.ms}ms`, font: { size: 9, weight: 'medium', design: 'monospaced' }, textColor: responseColor(item.info.ms, item.info.available) }
+          { type: 'text', text: `${item.info.ms}ms`, font: { size: 9, weight: 'medium', design: 'monospaced' }, textColor: responseColor(item.info.ms, item.info.available) },
+          { type: 'spacer' }
         ]}
       ]
     });
@@ -168,7 +169,7 @@ export default async function(ctx) {
 
   const renderLarge = () => {
     const LargeServiceBlock = (item) => ({
-      type: 'stack', direction: 'column', flex: 1, gap: 6, alignItems: 'start',
+      type: 'stack', direction: 'column', flex: 1, gap: 6,
       children: [
         { type: 'stack', direction: 'row', alignItems: 'center', children: [
           { type: 'stack', width: 7, height: 7, borderRadius: 3.5, backgroundColor: item.info.available ? C.ok : C.fail },
@@ -178,7 +179,8 @@ export default async function(ctx) {
         { type: 'stack', direction: 'row', alignItems: 'center', children: [
           { type: 'text', text: `${getFlagEmoji(item.info.region)} ${item.info.region}`, font: { size: 11, weight: 'medium', design: 'monospaced' }, textColor: C.dim, textAlign: 'left' },
           { type: 'stack', width: 6 },
-          { type: 'text', text: `${item.info.ms}ms`, font: { size: 11, weight: 'medium', design: 'monospaced' }, textColor: responseColor(item.info.ms, item.info.available) }
+          { type: 'text', text: `${item.info.ms}ms`, font: { size: 11, weight: 'medium', design: 'monospaced' }, textColor: responseColor(item.info.ms, item.info.available) },
+          { type: 'spacer' }
         ]}
       ]
     });
