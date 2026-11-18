@@ -140,7 +140,7 @@ export default async function(ctx) {
 
   const renderMedium = () => {
     const MediumServiceBlock = (item) => ({
-      type: 'stack', direction: 'column', flex: 1, gap: 4,
+      type: 'stack', direction: 'column', flex: 1, gap: 4, padding: [0, 2, 0, 2],
       children: [
         { type: 'stack', direction: 'row', alignItems: 'center', gap: 6, children: [
           { type: 'stack', width: 6, height: 6, borderRadius: 3, backgroundColor: item.info.available ? C.ok : C.fail },
@@ -166,7 +166,7 @@ export default async function(ctx) {
 
   const renderLarge = () => {
     const LargeServiceBlock = (item) => ({
-      type: 'stack', direction: 'column', flex: 1, gap: 6,
+      type: 'stack', direction: 'column', flex: 1, gap: 6, padding: [0, 2, 0, 2],
       children: [
         { type: 'stack', direction: 'row', alignItems: 'center', gap: 6, children: [
           { type: 'stack', width: 7, height: 7, borderRadius: 3.5, backgroundColor: item.info.available ? C.ok : C.fail },
