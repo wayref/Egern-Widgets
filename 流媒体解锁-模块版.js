@@ -112,7 +112,7 @@ export default async function(ctx) {
     { name: 'YouTube', info: resultInfo(youtube, proxyYT) }, { name: 'Netflix', info: resultInfo(netflix, proxyNF) },
     { name: 'TikTok', info: resultInfo(tiktok, proxyTT) }, { name: 'Spotify', info: resultInfo(spotify, proxySP) },
     { name: 'ChatGPT', info: resultInfo(chatgpt, proxyCG) }, { name: 'Claude', info: resultInfo(claude, proxyCL) },
-    { name: 'Gemini', info: resultInfo(gemini, proxyGM) }, { name: 'Grok', info: resultInfo(grok, proxyGK) }
+    { name: 'Gemini', info: resultInfo(gemini, proxyGM) }, { name: 'Grok AI', info: resultInfo(grok, proxyGK) }
   ];
   
   const okCount = allServices.filter(s => s.info.available).length;
