@@ -112,7 +112,7 @@ async function main() {
   if (widget.family === 'medium') {
     const MediumServiceBlock = (item) => ({
       type: 'stack', direction: 'row', flex: 1, children: [
-        { type: 'stack', direction: 'column', gap: 4, children: [
+        { type: 'stack', direction: 'column', gap: 4, alignItems: 'flex-start', children: [
           { type: 'stack', width: 6, height: 6, borderRadius: 3, backgroundColor: item.info.available ? C.ok : C.fail },
           { type: 'text', text: item.info.region, font: { size: 10, weight: 'medium', design: 'monospaced' }, textColor: C.dim }
         ]},
@@ -147,7 +147,7 @@ async function main() {
   // Large
   const LargeServiceBlock = (item) => ({
     type: 'stack', direction: 'row', flex: 1, children: [
-      { type: 'stack', direction: 'column', gap: 6, children: [
+      { type: 'stack', direction: 'column', gap: 6, alignItems: 'flex-start', children: [
         { type: 'stack', width: 7, height: 7, borderRadius: 3.5, backgroundColor: item.info.available ? C.ok : C.fail },
         { type: 'text', text: `${getFlagEmoji(item.info.region)} ${item.info.region}`, font: { size: 11, weight: 'medium', design: 'monospaced' }, textColor: C.dim }
       ]},
