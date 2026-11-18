@@ -1,5 +1,5 @@
 name: "网络诊断雷达"
-description: "网络诊断雷达：本地网络与代理出口双栏诊断，含流媒体与 AI 解锁检测"
+description: "网络诊断雷达：本地网络与代理出口双栏诊断"
 icon: "waveform.path.ecg"
 
 env_schema:
