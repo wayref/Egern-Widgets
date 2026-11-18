@@ -147,7 +147,7 @@ export default async function(ctx) {
           { type: 'stack', width: 6 },
           { type: 'text', text: item.name, font: { size: 11, weight: 'semibold' }, textColor: C.text, flex: 1, maxLines: 1 }
         ]},
-        { type: 'stack', direction: 'row', alignItems: 'center', children: [
+        { type: 'stack', direction: 'row', alignItems: 'center', padding: [0, 0, 0, -1], children: [
           { type: 'text', text: item.info.region, font: { size: 10, weight: 'medium', design: 'monospaced' }, textColor: C.dim },
           { type: 'stack', width: 4 },
           { type: 'text', text: `${item.info.ms}ms`, font: { size: 9, weight: 'medium', design: 'monospaced' }, textColor: responseColor(item.info.ms, item.info.available) }
@@ -175,7 +175,7 @@ export default async function(ctx) {
           { type: 'stack', width: 6 },
           { type: 'text', text: item.name, font: { size: 13, weight: 'semibold' }, textColor: C.text, flex: 1 }
         ]},
-        { type: 'stack', direction: 'row', alignItems: 'center', children: [
+        { type: 'stack', direction: 'row', alignItems: 'center', padding: [0, 0, 0, -1], children: [
           { type: 'text', text: `${getFlagEmoji(item.info.region)} ${item.info.region}`, font: { size: 11, weight: 'medium', design: 'monospaced' }, textColor: C.dim },
           { type: 'stack', width: 6 },
           { type: 'text', text: `${item.info.ms}ms`, font: { size: 11, weight: 'medium', design: 'monospaced' }, textColor: responseColor(item.info.ms, item.info.available) }
