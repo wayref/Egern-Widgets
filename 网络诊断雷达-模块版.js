@@ -147,7 +147,7 @@ export default async function(ctx) {
 
   const fetchLocalDelay = async () => {
     const start = Date.now();
-    try { await ctx.http.get('https://www.baidu.com/favicon.ico', { timeout: 2000 }); return `${Date.now() - start} ms`; } catch (e) { return "超时"; }
+    try { await ctx.http.get('https://www.baidu.com', { timeout: 2000 }); return `${Date.now() - start} ms`; } catch (e) { return "超时"; }
   };
 
   const fetchProxyDelay = async () => {
