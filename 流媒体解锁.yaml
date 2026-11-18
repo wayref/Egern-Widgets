@@ -15,6 +15,62 @@ env_schema:
       - 毛玻璃纯黑
       - 毛玻璃透明
     default_value: "纯黑背景"
+  TEST_YOUTUBE:
+    name: 测试 YouTube
+    description: 是否测试 YouTube 解锁状态
+    options:
+      - 开启
+      - 关闭
+    default_value: "开启"
+  TEST_NETFLIX:
+    name: 测试 Netflix
+    description: 是否测试 Netflix 解锁状态
+    options:
+      - 开启
+      - 关闭
+    default_value: "开启"
+  TEST_TIKTOK:
+    name: 测试 TikTok
+    description: 是否测试 TikTok 解锁状态
+    options:
+      - 开启
+      - 关闭
+    default_value: "开启"
+  TEST_SPOTIFY:
+    name: 测试 Spotify
+    description: 是否测试 Spotify 解锁状态
+    options:
+      - 开启
+      - 关闭
+    default_value: "开启"
+  TEST_CHATGPT:
+    name: 测试 ChatGPT
+    description: 是否测试 ChatGPT 解锁状态
+    options:
+      - 开启
+      - 关闭
+    default_value: "开启"
+  TEST_CLAUDE:
+    name: 测试 Claude
+    description: 是否测试 Claude 解锁状态
+    options:
+      - 开启
+      - 关闭
+    default_value: "开启"
+  TEST_GEMINI:
+    name: 测试 Gemini
+    description: 是否测试 Gemini 解锁状态
+    options:
+      - 开启
+      - 关闭
+    default_value: "开启"
+  TEST_GROK:
+    name: 测试 Grok
+    description: 是否测试 Grok 解锁状态
+    options:
+      - 开启
+      - 关闭
+    default_value: "开启"
 scriptings:
   - generic:
       name: "流媒体解锁"
