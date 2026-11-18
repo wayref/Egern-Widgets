@@ -290,7 +290,7 @@ const isSmall = family === 'small';
 
 // 大号：字体和间距都放大，填满空间；中号：当前尺寸；小号：紧凑布局
 const scale = isLarge ? 1.3 : (isSmall ? 0.85 : 1);
-const rowFontSize = Math.round(12 * scale);
+const rowFontSize = Math.round(13 * scale);
 const headerFontSize = Math.round(16 * scale);
 const rowIconSize = Math.round(13 * scale);
 const headerIconSize = Math.round(16 * scale);
