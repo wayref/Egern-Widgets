@@ -267,8 +267,7 @@ children: [
 { type: 'stack', direction: 'row', alignItems: 'center', gap: 6, children: [
 { type: 'image', src: 'sf-symbol:waveform.path.ecg', color: C.netRx, width: 16, height: 16},
 { type: 'text', text: '网络诊断雷达', font: { size: 16, weight: 'bold'}, textColor: C.text},
-{ type: 'spacer'},
-{ type: 'text', text: timeStr, font: { size: 10, weight: 'medium'}, textColor: TIME_COL}
+{ type: 'spacer'}
 ]},
 { type: 'spacer', length: 12},
 
