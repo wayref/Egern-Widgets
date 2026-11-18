@@ -301,9 +301,9 @@ children: [
 { type: 'stack', direction: 'column', gap: 8.5, flex: 1, children: [
 Row(netIcon, C.cpu, "环境", netName, C.cpu),
 Row("wifi.router.fill", C.cyan, "网关", gateway, C.cyan),
-Row("iphone", C.netRx, "内网", fmtIP(localIp), C.netRx),
-Row("globe.asia.australia.fill", C.cpu, "公网", fmtIP(localData.ip), C.cpu),
-Row("map.fill", C.cpu, "位置", localData.loc, C.cpu),
+Row("iphone", C.cpu, "内网", fmtIP(localIp), C.cpu),
+Row("globe.asia.australia.fill", C.netRx, "公网", fmtIP(localData.ip), C.netRx),
+Row("map.fill", C.netRx, "位置", localData.loc, C.netRx),
 Row("timer", latCol(localDelay), "延迟", localDelay, latCol(localDelay)),
 ]},
 
