@@ -15,62 +15,38 @@ env_schema:
       - 毛玻璃纯黑
       - 毛玻璃透明
     default_value: "纯黑背景"
-  TEST_YOUTUBE:
-    name: 测试 YouTube
-    description: 是否测试 YouTube 解锁状态
-    options:
-      - 开启
-      - 关闭
-    default_value: "开启"
-  TEST_NETFLIX:
-    name: 测试 Netflix
-    description: 是否测试 Netflix 解锁状态
-    options:
-      - 开启
-      - 关闭
-    default_value: "开启"
-  TEST_TIKTOK:
-    name: 测试 TikTok
-    description: 是否测试 TikTok 解锁状态
-    options:
-      - 开启
-      - 关闭
-    default_value: "开启"
-  TEST_SPOTIFY:
-    name: 测试 Spotify
-    description: 是否测试 Spotify 解锁状态
-    options:
-      - 开启
-      - 关闭
-    default_value: "开启"
-  TEST_CHATGPT:
-    name: 测试 ChatGPT
-    description: 是否测试 ChatGPT 解锁状态
-    options:
-      - 开启
-      - 关闭
-    default_value: "开启"
-  TEST_CLAUDE:
-    name: 测试 Claude
-    description: 是否测试 Claude 解锁状态
-    options:
-      - 开启
-      - 关闭
-    default_value: "开启"
-  TEST_GEMINI:
-    name: 测试 Gemini
-    description: 是否测试 Gemini 解锁状态
-    options:
-      - 开启
-      - 关闭
-    default_value: "开启"
-  TEST_GROK:
-    name: 测试 Grok
-    description: 是否测试 Grok 解锁状态
-    options:
-      - 开启
-      - 关闭
-    default_value: "开启"
+  POLICY_YOUTUBE:
+    name: YouTube 测试节点
+    description: YouTube 用哪个策略组测试，填策略组名如 香港智能优选，留空用默认
+    default_value: ""
+  POLICY_NETFLIX:
+    name: Netflix 测试节点
+    description: Netflix 用哪个策略组测试，填策略组名如 美国智能优选，留空用默认
+    default_value: ""
+  POLICY_TIKTOK:
+    name: TikTok 测试节点
+    description: TikTok 用哪个策略组测试，填策略组名，留空用默认
+    default_value: ""
+  POLICY_SPOTIFY:
+    name: Spotify 测试节点
+    description: Spotify 用哪个策略组测试，填策略组名，留空用默认
+    default_value: ""
+  POLICY_CHATGPT:
+    name: ChatGPT 测试节点
+    description: ChatGPT 用哪个策略组测试，填策略组名，留空用默认
+    default_value: ""
+  POLICY_CLAUDE:
+    name: Claude 测试节点
+    description: Claude 用哪个策略组测试，填策略组名，留空用默认
+    default_value: ""
+  POLICY_GEMINI:
+    name: Gemini 测试节点
+    description: Gemini 用哪个策略组测试，填策略组名，留空用默认
+    default_value: ""
+  POLICY_GROK:
+    name: Grok 测试节点
+    description: Grok 用哪个策略组测试，填策略组名，留空用默认
+    default_value: ""
 scriptings:
   - generic:
       name: "流媒体解锁"
