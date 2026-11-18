@@ -62,34 +62,27 @@ export default async function(ctx) {
     const res = await ctx.http.get(`https://www.netflix.com/`, { timeout: 5000, headers: commonHeaders, followRedirect: true }).catch(() => null);
     return { code: res?.status === 200 ? 'OK' : 'ERR' };
   }
-  async function checkDisney() { const res = await ctx.http.get(`https://www.disneyplus.com/`, { timeout: 3000, headers: commonHeaders, followRedirect: false }).catch(() => null); return { code: res && res.status === 200 ? 'OK' : 'ERR' }; }
   async function checkSpotify() { const res = await ctx.http.get(`https://open.spotify.com/`, { timeout: 3000, headers: commonHeaders, followRedirect: false }).catch(() => null); return { code: res && res.status === 200 ? 'OK' : 'ERR' }; }
   async function checkChatGPT() { const res = await ctx.http.get(`https://chatgpt.com/`, { timeout: 3000, headers: commonHeaders, followRedirect: false }).catch(() => null); return { code: (res && res.status !== 403 && res.status !== 429) ? 'OK' : 'ERR' }; }
   async function checkClaude() { const res = await ctx.http.get(`https://claude.ai/login`, { timeout: 3000, headers: commonHeaders, followRedirect: false }).catch(() => null); return { code: res && res.status === 200 ? 'OK' : 'ERR' }; }
   async function checkGemini() { const res = await ctx.http.get(`https://gemini.google.com/app`, { timeout: 3000, headers: commonHeaders, followRedirect: false }).catch(() => null); return { code: res && res.status === 200 ? 'OK' : 'ERR' }; }
   async function checkGrok() { const res = await ctx.http.get(`https://grok.com/`, { timeout: 3000, headers: commonHeaders, followRedirect: false }).catch(() => null); return { code: res && res.status === 200 ? 'OK' : 'ERR' }; }
   async function checkTikTok() { const res = await ctx.http.get(`https://www.tiktok.com/`, { timeout: 3000, headers: commonHeaders, followRedirect: false }).catch(() => null); return { code: res && res.status === 200 ? 'OK' : 'ERR' }; }
-  async function checkInstagram() { const res = await ctx.http.get(`https://www.instagram.com/`, { timeout: 3000, headers: commonHeaders, followRedirect: false }).catch(() => null); return { code: res && res.status === 200 ? 'OK' : 'ERR' }; }
-  async function checkFacebook() { const res = await ctx.http.get(`https://www.facebook.com/`, { timeout: 3000, headers: commonHeaders, followRedirect: false }).catch(() => null); return { code: res && res.status === 200 ? 'OK' : 'ERR' }; }
-  async function checkTwitter() { const res = await ctx.http.get(`https://x.com/`, { timeout: 3000, headers: commonHeaders, followRedirect: false }).catch(() => null); return { code: res && res.status === 200 ? 'OK' : 'ERR' }; }
-  async function checkThreads() { const res = await ctx.http.get(`https://www.threads.net/`, { timeout: 3000, headers: commonHeaders, followRedirect: false }).catch(() => null); return { code: res && res.status === 200 ? 'OK' : 'ERR' }; }
-  async function checkGitHub() { const res = await ctx.http.get(`https://github.com/`, { timeout: 3000, headers: commonHeaders, followRedirect: false }).catch(() => null); return { code: res && res.status === 200 ? 'OK' : 'ERR' }; }
 
   // 总超时 10 秒，防止某个服务卡住
   const allChecks = await Promise.race([
     Promise.all([
-      timed(fetchProxy), timed(checkYouTube), timed(checkNetflix, 5000), timed(checkDisney),
-      timed(checkSpotify), timed(checkChatGPT), timed(checkClaude), timed(checkGemini), timed(checkGrok),
-      timed(checkTikTok), timed(checkInstagram), timed(checkFacebook), timed(checkTwitter), timed(checkThreads), timed(checkGitHub)
+      timed(fetchProxy), timed(checkYouTube), timed(checkNetflix, 5000), timed(checkTikTok),
+      timed(checkSpotify), timed(checkChatGPT), timed(checkClaude), timed(checkGemini), timed(checkGrok)
     ]),
     new Promise((_, reject) => setTimeout(() => reject(new Error('Overall timeout')), 10000))
   ]).catch(() => {
     // 超时时返回全部 ERR
     const err = { code: 'ERR', ms: 0 };
-    return [err, err, err, err, err, err, err, err, err, err, err, err, err, err, err];
+    return [err, err, err, err, err, err, err, err, err];
   });
 
-  const [proxy, youtube, netflix, disney, spotify, chatgpt, claude, gemini, grok, tiktok, instagram, facebook, twitter, threads, github] = allChecks;
+  const [proxy, youtube, netflix, tiktok, spotify, chatgpt, claude, gemini, grok] = allChecks;
   
   const resultInfo = (result) => {
     const available = result.code !== 'ERR';
@@ -98,12 +91,9 @@ export default async function(ctx) {
   
   const allServices = [
     { name: 'YouTube', info: resultInfo(youtube) }, { name: 'Netflix', info: resultInfo(netflix) },
-    { name: 'Disney+', info: resultInfo(disney) }, { name: 'Spotify', info: resultInfo(spotify) },
+    { name: 'TikTok', info: resultInfo(tiktok) }, { name: 'Spotify', info: resultInfo(spotify) },
     { name: 'ChatGPT', info: resultInfo(chatgpt) }, { name: 'Claude', info: resultInfo(claude) },
-    { name: 'Gemini', info: resultInfo(gemini) }, { name: 'Grok', info: resultInfo(grok) },
-    { name: 'TikTok', info: resultInfo(tiktok) }, { name: 'Instagram', info: resultInfo(instagram) },
-    { name: 'Facebook', info: resultInfo(facebook) }, { name: 'Twitter', info: resultInfo(twitter) },
-    { name: 'Threads', info: resultInfo(threads) }, { name: 'GitHub', info: resultInfo(github) }
+    { name: 'Gemini', info: resultInfo(gemini) }, { name: 'Grok', info: resultInfo(grok) }
   ];
   
   const okCount = allServices.filter(s => s.info.available).length;
