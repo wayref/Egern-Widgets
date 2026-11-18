@@ -140,7 +140,7 @@ export default async function(ctx) {
 
   const renderMedium = () => {
     const MediumServiceBlock = (item) => ({
-      type: 'stack', direction: 'column', flex: 1, gap: 4,
+      type: 'stack', direction: 'column', flex: 1, gap: 4, alignItems: 'start',
       children: [
         { type: 'stack', direction: 'row', alignItems: 'center', children: [
           { type: 'stack', width: 6, height: 6, borderRadius: 3, backgroundColor: item.info.available ? C.ok : C.fail },
@@ -160,8 +160,8 @@ export default async function(ctx) {
       children: [
         renderHeader(),
         { type: 'stack', direction: 'column', gap: 8, flex: 1, children: [
-          { type: 'stack', direction: 'row', gap: 6, flex: 1, children: allServices.slice(0, 4).map(MediumServiceBlock) },
-          { type: 'stack', direction: 'row', gap: 6, flex: 1, children: allServices.slice(4, 8).map(MediumServiceBlock) }
+          { type: 'stack', direction: 'row', gap: 6, flex: 1, justifyContent: 'space-between', children: allServices.slice(0, 4).map(MediumServiceBlock) },
+          { type: 'stack', direction: 'row', gap: 6, flex: 1, justifyContent: 'space-between', children: allServices.slice(4, 8).map(MediumServiceBlock) }
         ]}
       ]
     };
@@ -169,7 +169,7 @@ export default async function(ctx) {
 
   const renderLarge = () => {
     const LargeServiceBlock = (item) => ({
-      type: 'stack', direction: 'column', flex: 1, gap: 6,
+      type: 'stack', direction: 'column', flex: 1, gap: 6, alignItems: 'start',
       children: [
         { type: 'stack', direction: 'row', alignItems: 'center', children: [
           { type: 'stack', width: 7, height: 7, borderRadius: 3.5, backgroundColor: item.info.available ? C.ok : C.fail },
@@ -186,7 +186,7 @@ export default async function(ctx) {
     });
     const rows = [];
     for (let i = 0; i < 8; i += 2) {
-      rows.push({ type: 'stack', direction: 'row', gap: 10, flex: 1, children: [LargeServiceBlock(allServices[i]), LargeServiceBlock(allServices[i+1])] });
+      rows.push({ type: 'stack', direction: 'row', gap: 10, flex: 1, justifyContent: 'space-between', children: [LargeServiceBlock(allServices[i]), LargeServiceBlock(allServices[i+1])] });
     }
     return {
       type: 'widget', ...rootBackground(), padding: [16, 16, 16, 16], gap: 10,
