@@ -7,6 +7,19 @@ export default async function(ctx) {
 
   // WIDGET_STYLE: 纯黑背景 / 毛玻璃纯黑 / 毛玻璃透明
   const style = (ctx.env.WIDGET_STYLE || '纯黑背景').trim();
+
+  // 服务开关：用户可手动选择测试哪些服务
+  const isEnabled = (key) => (ctx.env[key] || '开启').trim() !== '关闭';
+  const enabledServices = {
+    youtube: isEnabled('TEST_YOUTUBE'),
+    netflix: isEnabled('TEST_NETFLIX'),
+    tiktok: isEnabled('TEST_TIKTOK'),
+    spotify: isEnabled('TEST_SPOTIFY'),
+    chatgpt: isEnabled('TEST_CHATGPT'),
+    claude: isEnabled('TEST_CLAUDE'),
+    gemini: isEnabled('TEST_GEMINI'),
+    grok: isEnabled('TEST_GROK')
+  };
   const rootBackground = (mode) => {
     if (style === '毛玻璃透明') return {};
     if (style === '毛玻璃纯黑') return { backgroundColor: 'rgba(0,0,0,0.55)' };
@@ -90,11 +103,15 @@ export default async function(ctx) {
   };
   
   const allServices = [
-    { name: 'YouTube', info: resultInfo(youtube) }, { name: 'Netflix', info: resultInfo(netflix) },
-    { name: 'TikTok', info: resultInfo(tiktok) }, { name: 'Spotify', info: resultInfo(spotify) },
-    { name: 'ChatGPT', info: resultInfo(chatgpt) }, { name: 'Claude', info: resultInfo(claude) },
-    { name: 'Gemini', info: resultInfo(gemini) }, { name: 'Grok', info: resultInfo(grok) }
-  ];
+    { name: 'YouTube', info: resultInfo(youtube), enabled: enabledServices.youtube },
+    { name: 'Netflix', info: resultInfo(netflix), enabled: enabledServices.netflix },
+    { name: 'TikTok', info: resultInfo(tiktok), enabled: enabledServices.tiktok },
+    { name: 'Spotify', info: resultInfo(spotify), enabled: enabledServices.spotify },
+    { name: 'ChatGPT', info: resultInfo(chatgpt), enabled: enabledServices.chatgpt },
+    { name: 'Claude', info: resultInfo(claude), enabled: enabledServices.claude },
+    { name: 'Gemini', info: resultInfo(gemini), enabled: enabledServices.gemini },
+    { name: 'Grok', info: resultInfo(grok), enabled: enabledServices.grok }
+  ].filter(s => s.enabled);
   
   const okCount = allServices.filter(s => s.info.available).length;
   const lockedCount = allServices.length - okCount;
@@ -187,8 +204,10 @@ export default async function(ctx) {
       ]
     });
     const rows = [];
-    for (let i = 0; i < 8; i += 2) {
-      rows.push({ type: 'stack', direction: 'row', gap: 10, flex: 1, justifyContent: 'space-between', children: [LargeServiceBlock(allServices[i]), LargeServiceBlock(allServices[i+1])] });
+    for (let i = 0; i < allServices.length; i += 2) {
+      const rowChildren = [LargeServiceBlock(allServices[i])];
+      if (i + 1 < allServices.length) rowChildren.push(LargeServiceBlock(allServices[i+1]));
+      rows.push({ type: 'stack', direction: 'row', gap: 10, flex: 1, justifyContent: 'space-between', children: rowChildren });
     }
     return {
       type: 'widget', ...rootBackground(), padding: [16, 16, 16, 16], gap: 10,
