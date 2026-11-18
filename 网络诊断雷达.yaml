@@ -11,6 +11,10 @@ env_schema:
       - 毛玻璃纯黑
       - 毛玻璃透明
     default_value: "纯黑背景"
+  POLICY_EXIT:
+    name: 出口检测节点
+    description: 出口用哪个策略组或节点检测，填策略组名如 香港智能优选 或节点名，留空用默认
+    default_value: ""
 
 scriptings:
   - generic:
