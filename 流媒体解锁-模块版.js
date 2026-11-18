@@ -140,16 +140,14 @@ export default async function(ctx) {
 
   const renderMedium = () => {
     const MediumServiceBlock = (item) => ({
-      type: 'stack', direction: 'column', flex: 1, gap: 4, padding: [0, 2, 0, 2],
+      type: 'stack', direction: 'row', flex: 1, gap: 6,
       children: [
-        { type: 'stack', direction: 'row', alignItems: 'center', children: [
+        { type: 'stack', direction: 'column', gap: 4, children: [
           { type: 'stack', width: 6, height: 6, borderRadius: 3, backgroundColor: item.info.available ? C.ok : C.fail },
-          { type: 'stack', width: 6 },
-          { type: 'text', text: item.name, font: { size: 11, weight: 'semibold' }, textColor: C.text, flex: 1, maxLines: 1 }
+          { type: 'text', text: item.info.region, font: { size: 10, weight: 'medium', design: 'monospaced' }, textColor: C.dim }
         ]},
-        { type: 'stack', direction: 'row', alignItems: 'center', padding: [0, 0, 0, -1], children: [
-          { type: 'text', text: item.info.region, font: { size: 10, weight: 'medium', design: 'monospaced' }, textColor: C.dim },
-          { type: 'stack', width: 4 },
+        { type: 'stack', direction: 'column', gap: 4, flex: 1, children: [
+          { type: 'text', text: item.name, font: { size: 11, weight: 'semibold' }, textColor: C.text, maxLines: 1 },
           { type: 'text', text: `${item.info.ms}ms`, font: { size: 9, weight: 'medium', design: 'monospaced' }, textColor: responseColor(item.info.ms, item.info.available) }
         ]}
       ]
@@ -168,16 +166,14 @@ export default async function(ctx) {
 
   const renderLarge = () => {
     const LargeServiceBlock = (item) => ({
-      type: 'stack', direction: 'column', flex: 1, gap: 6, padding: [0, 2, 0, 2],
+      type: 'stack', direction: 'row', flex: 1, gap: 6,
       children: [
-        { type: 'stack', direction: 'row', alignItems: 'center', children: [
+        { type: 'stack', direction: 'column', gap: 6, children: [
           { type: 'stack', width: 7, height: 7, borderRadius: 3.5, backgroundColor: item.info.available ? C.ok : C.fail },
-          { type: 'stack', width: 6 },
-          { type: 'text', text: item.name, font: { size: 13, weight: 'semibold' }, textColor: C.text, flex: 1 }
+          { type: 'text', text: `${getFlagEmoji(item.info.region)} ${item.info.region}`, font: { size: 11, weight: 'medium', design: 'monospaced' }, textColor: C.dim }
         ]},
-        { type: 'stack', direction: 'row', alignItems: 'center', padding: [0, 0, 0, -1], children: [
-          { type: 'text', text: `${getFlagEmoji(item.info.region)} ${item.info.region}`, font: { size: 11, weight: 'medium', design: 'monospaced' }, textColor: C.dim },
-          { type: 'stack', width: 6 },
+        { type: 'stack', direction: 'column', gap: 6, flex: 1, children: [
+          { type: 'text', text: item.name, font: { size: 13, weight: 'semibold' }, textColor: C.text },
           { type: 'text', text: `${item.info.ms}ms`, font: { size: 11, weight: 'medium', design: 'monospaced' }, textColor: responseColor(item.info.ms, item.info.available) }
         ]}
       ]
