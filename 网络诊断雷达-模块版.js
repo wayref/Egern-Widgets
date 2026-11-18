@@ -283,41 +283,69 @@ children: [
 ]
 });
 
-// 7. UI 输出结构
+// 7. UI 输出结构 - 根据尺寸缩放
+const family = ctx.widgetFamily || 'medium';
+const isLarge = family === 'large';
+const isSmall = family === 'small';
+
+// 大号：字体和间距都放大，填满空间；中号：当前尺寸；小号：紧凑布局
+const scale = isLarge ? 1.3 : (isSmall ? 0.85 : 1);
+const rowFontSize = Math.round(12 * scale);
+const headerFontSize = Math.round(18 * scale);
+const rowIconSize = Math.round(13 * scale);
+const headerIconSize = Math.round(18 * scale);
+const rowGap = isLarge ? 18 : (isSmall ? 8 : 12);
+const colGap = isLarge ? 16 : 10;
+const padding = isLarge ? 20 : (isSmall ? 12 : 16);
+const headerSpacer = isLarge ? 20 : (isSmall ? 10 : 16);
+
+// 大号用放大的 Row 组件
+const RowScaled = (ic, icCol, label, val, valCol) => ({
+type: 'stack', direction: 'row', alignItems: 'center', gap: 5,
+children: [
+{ type: 'image', src: `sf-symbol:${ic}`, color: icCol, width: rowIconSize, height: rowIconSize},
+{ type: 'text', text: label, font: { size: rowFontSize, weight: 'regular'}, textColor: C.dim, maxLines: 1, minScale: 0.85},
+{ type: 'spacer'},
+{ type: 'text', text: val, font: { size: rowFontSize, weight: 'medium'}, textColor: valCol, maxLines: 1, minScale: 0.75}
+]
+});
+
+const RowToUse = isLarge ? RowScaled : Row;
+
 return {
 type: 'widget',
-padding: 16,
+padding: padding,
 ...widgetBackground(),
 children: [
 { type: 'stack', direction: 'row', alignItems: 'center', gap: 6, children: [
-{ type: 'image', src: 'sf-symbol:waveform.path.ecg', color: C.netRx, width: 18, height: 18},
-{ type: 'text', text: '网络诊断雷达', font: { size: 18, weight: 'bold'}, textColor: C.text},
+{ type: 'image', src: 'sf-symbol:waveform.path.ecg', color: C.netRx, width: headerIconSize, height: headerIconSize},
+{ type: 'text', text: '网络诊断雷达', font: { size: headerFontSize, weight: 'bold'}, textColor: C.text},
 { type: 'spacer'}
 ]},
-{ type: 'spacer', length: 16},
+{ type: 'spacer', length: headerSpacer},
 
-{ type: 'stack', direction: 'row', gap: 10, children: [
+{ type: 'stack', direction: 'row', gap: colGap, children: [
 // ：本地网络
-{ type: 'stack', direction: 'column', gap: 12, flex: 1, children: [
-Row(netIcon, C.cpu, "环境", netName, C.cpu),
-Row("wifi.router.fill", C.cyan, "网关", gateway, C.cyan),
-Row("iphone", C.cpu, "内网", fmtIP(localIp), C.cpu),
-Row("globe.asia.australia.fill", C.netRx, "公网", fmtIP(localData.ip), C.netRx),
-Row("map.fill", C.netRx, "位置", localData.loc, C.netRx),
-Row("timer", latCol(localDelay), "延迟", localDelay, latCol(localDelay)),
+{ type: 'stack', direction: 'column', gap: rowGap, flex: 1, children: [
+RowToUse(netIcon, C.cpu, "环境", netName, C.cpu),
+RowToUse("wifi.router.fill", C.cyan, "网关", gateway, C.cyan),
+RowToUse("iphone", C.cpu, "内网", fmtIP(localIp), C.cpu),
+RowToUse("globe.asia.australia.fill", C.netRx, "公网", fmtIP(localData.ip), C.netRx),
+RowToUse("map.fill", C.netRx, "位置", localData.loc, C.netRx),
+RowToUse("timer", latCol(localDelay), "延迟", localDelay, latCol(localDelay)),
 ]},
 
 // 中央垂直分割线
 { type: 'stack', width: 0.5, backgroundColor: C.barBg},
 
 // ：中转代理出口
-{ type: 'stack', direction: 'column', gap: 12, flex: 1, children: [
-Row("paperplane.fill", C.mem, "出口", fmtIP(finalProxy.ip), C.mem),
-Row("mappin.and.ellipse", C.red, "落地", finalProxy.loc, C.text),
-Row("server.rack", C.cpu, "厂商", finalProxy.isp, C.cpu),
-Row(nativeIc, nativeCol, "属性", nativeText, nativeCol),
-Row(riskIc, riskCol, "纯净", riskTxt, riskCol),
-Row("timer", latCol(proxyDelay), "延迟", proxyDelay, latCol(proxyDelay)),
+{ type: 'stack', direction: 'column', gap: rowGap, flex: 1, children: [
+RowToUse("paperplane.fill", C.mem, "出口", fmtIP(finalProxy.ip), C.mem),
+RowToUse("mappin.and.ellipse", C.red, "落地", finalProxy.loc, C.text),
+RowToUse("server.rack", C.cpu, "厂商", finalProxy.isp, C.cpu),
+RowToUse(nativeIc, nativeCol, "属性", nativeText, nativeCol),
+RowToUse(riskIc, riskCol, "纯净", riskTxt, riskCol),
+RowToUse("timer", latCol(proxyDelay), "延迟", proxyDelay, latCol(proxyDelay)),
 ]}
 ]},
 { type: 'spacer'}
