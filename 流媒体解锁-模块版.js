@@ -128,7 +128,7 @@ export default async function(ctx) {
     type: 'stack', direction: 'row', alignItems: 'center', children: [
       { type: 'image', src: 'sf-symbol:antenna.radiowaves.left.and.right', color: lockedCount === 0 ? C.ok : C.accent, width: 14, height: 14 },
       { type: 'stack', width: 8 },
-      { type: 'text', text: '流媒体解锁', font: { size: 14, weight: 'bold' }, textColor: C.text },
+      { type: 'text', text: '流媒体解锁', font: { size: 16, weight: 'bold' }, textColor: C.text },
       { type: 'spacer' },
       { type: 'text', text: `${okCount}/${allServices.length}`, font: { size: 12, weight: 'bold', design: 'monospaced' }, textColor: lockedCount === 0 ? C.ok : C.fail }
     ]
@@ -141,7 +141,7 @@ export default async function(ctx) {
         { type: 'stack', direction: 'row', alignItems: 'center', padding: [0, 0, 4, 0], children: [
           { type: 'image', src: 'sf-symbol:antenna.radiowaves.left.and.right', color: lockedCount === 0 ? C.ok : C.accent, width: 12, height: 12 },
           { type: 'stack', width: 6 },
-          { type: 'text', text: '流媒体解锁', font: { size: 11, weight: 'bold' }, textColor: C.text },
+          { type: 'text', text: '流媒体解锁', font: { size: 16, weight: 'bold' }, textColor: C.text },
           { type: 'spacer' },
           { type: 'text', text: `${okCount}/${allServices.length}`, font: { size: 10, weight: 'bold', design: 'monospaced' }, textColor: lockedCount === 0 ? C.ok : C.fail }
         ]},
