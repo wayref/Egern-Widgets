@@ -115,18 +115,20 @@ export default async function(ctx) {
 
   const renderSmall = () => {
     return {
-      type: 'widget', ...rootBackground(), padding: [12, 16, 10, 16],
+      type: 'widget', ...rootBackground(), padding: [10, 14, 10, 14],
       children: [
-        { type: 'stack', direction: 'row', alignItems: 'center', padding: [0, 0, 6, 0], children: [
+        { type: 'stack', direction: 'row', alignItems: 'center', padding: [0, 0, 4, 0], children: [
           { type: 'image', src: 'sf-symbol:antenna.radiowaves.left.and.right', color: lockedCount === 0 ? C.ok : C.accent, width: 12, height: 12 },
           { type: 'stack', width: 6 },
-          { type: 'text', text: '流媒体解锁', font: { size: 12, weight: 'bold' }, textColor: C.text },
+          { type: 'text', text: '流媒体解锁', font: { size: 11, weight: 'bold' }, textColor: C.text },
           { type: 'spacer' },
-          { type: 'text', text: `${okCount}/${allServices.length}`, font: { size: 11, weight: 'bold', design: 'monospaced' }, textColor: lockedCount === 0 ? C.ok : C.fail },
+          { type: 'text', text: `${okCount}/${allServices.length}`, font: { size: 10, weight: 'bold', design: 'monospaced' }, textColor: lockedCount === 0 ? C.ok : C.fail },
+          { type: 'stack', width: 8 },
+          { type: 'text', text: time, font: { size: 10, weight: 'medium', design: 'monospaced' }, textColor: C.dim }
         ]},
-        { type: 'stack', direction: 'column', flex: 1, justifyContent: 'space-between', gap: 3, children: allServices.slice(0, 6).map(item => ({
+        { type: 'stack', direction: 'column', flex: 1, justifyContent: 'space-between', gap: 2, children: allServices.map(item => ({
           type: 'stack', direction: 'row', alignItems: 'center', gap: 6, children: [
-            { type: 'stack', width: 6, height: 6, borderRadius: 3, backgroundColor: item.info.available ? C.ok : C.fail },
+            { type: 'stack', width: 5, height: 5, borderRadius: 2.5, backgroundColor: item.info.available ? C.ok : C.fail },
             { type: 'text', text: item.name, font: { size: 11, weight: 'semibold' }, textColor: C.text, maxLines: 1 },
             { type: 'spacer' },
             { type: 'text', text: `${getFlagEmoji(item.info.region)} ${item.info.region}`, font: { size: 10, weight: 'medium', design: 'monospaced' }, textColor: C.dim }
@@ -151,15 +153,13 @@ export default async function(ctx) {
         ]}
       ]
     });
-    // 中号显示 8 个（2 行 x 4 列）
-    const displayServices = allServices.slice(0, 8);
     return {
-      type: 'widget', ...rootBackground(), padding: [14, 16, 12, 16], gap: 10,
+      type: 'widget', ...rootBackground(), padding: [14, 14, 14, 14], gap: 10,
       children: [
         renderHeader(),
-        { type: 'stack', direction: 'column', gap: 10, flex: 1, children: [
-          { type: 'stack', direction: 'row', gap: 12, children: displayServices.slice(0, 4).map(MediumServiceBlock) },
-          { type: 'stack', direction: 'row', gap: 12, children: displayServices.slice(4, 8).map(MediumServiceBlock) }
+        { type: 'stack', direction: 'column', gap: 8, flex: 1, children: [
+          { type: 'stack', direction: 'row', gap: 6, children: allServices.slice(0, 4).map(MediumServiceBlock) },
+          { type: 'stack', direction: 'row', gap: 6, children: allServices.slice(4, 8).map(MediumServiceBlock) }
         ]}
       ]
     };
@@ -181,18 +181,14 @@ export default async function(ctx) {
       ]
     });
     const rows = [];
-    for (let i = 0; i < allServices.length; i += 2) {
-      if (i + 1 < allServices.length) {
-        rows.push({ type: 'stack', direction: 'row', gap: 16, flex: 1, children: [LargeServiceBlock(allServices[i]), LargeServiceBlock(allServices[i+1])] });
-      } else {
-        rows.push({ type: 'stack', direction: 'row', gap: 16, flex: 1, children: [LargeServiceBlock(allServices[i]), { type: 'stack', flex: 1 }] });
-      }
+    for (let i = 0; i < 8; i += 2) {
+      rows.push({ type: 'stack', direction: 'row', gap: 10, flex: 1, children: [LargeServiceBlock(allServices[i]), LargeServiceBlock(allServices[i+1])] });
     }
     return {
-      type: 'widget', ...rootBackground(), padding: [16, 18, 14, 18], gap: 12,
+      type: 'widget', ...rootBackground(), padding: [16, 16, 16, 16], gap: 10,
       children: [
         renderHeader(),
-        { type: 'stack', direction: 'column', gap: 12, flex: 1, children: rows }
+        { type: 'stack', direction: 'column', gap: 10, flex: 1, children: rows }
       ]
     };
   };
