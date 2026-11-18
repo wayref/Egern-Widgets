@@ -276,29 +276,29 @@ const TIME_COL = C.dim;
 const Row = (ic, icCol, label, val, valCol) => ({
 type: 'stack', direction: 'row', alignItems: 'center', gap: 5,
 children: [
-{ type: 'image', src: `sf-symbol:${ic}`, color: icCol, width: 11, height: 11},
-{ type: 'text', text: label, font: { size: 10.5, weight: 'regular'}, textColor: C.dim, maxLines: 1, minScale: 0.85},
+{ type: 'image', src: `sf-symbol:${ic}`, color: icCol, width: 13, height: 13},
+{ type: 'text', text: label, font: { size: 12, weight: 'regular'}, textColor: C.dim, maxLines: 1, minScale: 0.85},
 { type: 'spacer'},
-{ type: 'text', text: val, font: { size: 10.5, weight: 'medium'}, textColor: valCol, maxLines: 1, minScale: 0.75}
+{ type: 'text', text: val, font: { size: 12, weight: 'medium'}, textColor: valCol, maxLines: 1, minScale: 0.75}
 ]
 });
 
 // 7. UI 输出结构
 return {
 type: 'widget',
-padding: 14,
+padding: 16,
 ...widgetBackground(),
 children: [
 { type: 'stack', direction: 'row', alignItems: 'center', gap: 6, children: [
-{ type: 'image', src: 'sf-symbol:waveform.path.ecg', color: C.netRx, width: 16, height: 16},
-{ type: 'text', text: '网络诊断雷达', font: { size: 16, weight: 'bold'}, textColor: C.text},
+{ type: 'image', src: 'sf-symbol:waveform.path.ecg', color: C.netRx, width: 18, height: 18},
+{ type: 'text', text: '网络诊断雷达', font: { size: 18, weight: 'bold'}, textColor: C.text},
 { type: 'spacer'}
 ]},
-{ type: 'spacer', length: 12},
+{ type: 'spacer', length: 16},
 
 { type: 'stack', direction: 'row', gap: 10, children: [
 // ：本地网络
-{ type: 'stack', direction: 'column', gap: 8.5, flex: 1, children: [
+{ type: 'stack', direction: 'column', gap: 12, flex: 1, children: [
 Row(netIcon, C.cpu, "环境", netName, C.cpu),
 Row("wifi.router.fill", C.cyan, "网关", gateway, C.cyan),
 Row("iphone", C.cpu, "内网", fmtIP(localIp), C.cpu),
@@ -311,7 +311,7 @@ Row("timer", latCol(localDelay), "延迟", localDelay, latCol(localDelay)),
 { type: 'stack', width: 0.5, backgroundColor: C.barBg},
 
 // ：中转代理出口
-{ type: 'stack', direction: 'column', gap: 8.5, flex: 1, children: [
+{ type: 'stack', direction: 'column', gap: 12, flex: 1, children: [
 Row("paperplane.fill", C.mem, "出口", fmtIP(finalProxy.ip), C.mem),
 Row("mappin.and.ellipse", C.red, "落地", finalProxy.loc, C.text),
 Row("server.rack", C.cpu, "厂商", finalProxy.isp, C.cpu),
