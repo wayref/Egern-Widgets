@@ -148,18 +148,17 @@ function detectVPNStatus(ipInfo, chinaIP) {
   let isProxy = false;
   let proxyType = "";
 
-  // 1. 多源 IP 对比
-  if (chinaIP && chinaIP !== intlIP) {
+  // 1. IP 在海外（用户在国内，IP 却在海外，必定是代理/VPN）
+  if (isOverseasIP(ipInfo)) {
+    isProxy = true;
+    proxyType = chinaIP && chinaIP !== intlIP ? "分流代理" : "代理";
+    vpnScore += 60;
+  }
+  // 2. 多源 IP 对比（国内 IP 与国际 IP 不同，分流代理）
+  else if (chinaIP && chinaIP !== intlIP) {
     isProxy = true;
     proxyType = "分流代理";
     vpnScore += 50;
-  }
-
-  // 2. 国内 IP 获取失败且当前 IP 在海外
-  if (!chinaIP && isOverseasIP(ipInfo)) {
-    isProxy = true;
-    proxyType = "代理";
-    vpnScore += 45;
   }
 
   // 3. ISP 分析
