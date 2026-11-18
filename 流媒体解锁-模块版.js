@@ -56,9 +56,11 @@ export default async function(ctx) {
     }
   }
 
-  const fetchProxy = async () => {
+  const fetchProxy = async (policy) => {
     const ts = Date.now();
-    const res = await ctx.http.get(`http://ip-api.com/json/?lang=zh-CN&_t=${ts}`, { timeout: 2500 }).catch(() => null);
+    const opts = { timeout: 2500 };
+    if (policy) opts.policy = policy;
+    const res = await ctx.http.get(`http://ip-api.com/json/?lang=zh-CN&_t=${ts}`, opts).catch(() => null);
     if (!res) return { code: 'ERR', cc: 'XX' };
     const data = JSON.parse(await res.text());
     return { code: data.countryCode ? 'OK' : 'ERR', cc: data.countryCode || 'XX' };
@@ -78,30 +80,39 @@ export default async function(ctx) {
   async function checkTikTok() { const opts = { timeout: 3000, headers: commonHeaders, followRedirect: false }; const p_tiktok = envOf('POLICY_TIKTOK'); if (p_tiktok) opts.policy = p_tiktok; const res = await ctx.http.get(`https://www.tiktok.com/`, opts).catch(() => null); return { code: res && res.status === 200 ? 'OK' : 'ERR' }; }
 
   // 总超时 10 秒，防止某个服务卡住
+  // 每个服务单独查地区，用各自的策略组
   const allChecks = await Promise.race([
     Promise.all([
-      timed(fetchProxy), timed(checkYouTube), timed(checkNetflix, 5000), timed(checkTikTok),
+      timed(() => fetchProxy(envOf('POLICY_YOUTUBE'))),
+      timed(() => fetchProxy(envOf('POLICY_NETFLIX'))),
+      timed(() => fetchProxy(envOf('POLICY_TIKTOK'))),
+      timed(() => fetchProxy(envOf('POLICY_SPOTIFY'))),
+      timed(() => fetchProxy(envOf('POLICY_CHATGPT'))),
+      timed(() => fetchProxy(envOf('POLICY_CLAUDE'))),
+      timed(() => fetchProxy(envOf('POLICY_GEMINI'))),
+      timed(() => fetchProxy(envOf('POLICY_GROK'))),
+      timed(checkYouTube), timed(checkNetflix, 5000), timed(checkTikTok),
       timed(checkSpotify), timed(checkChatGPT), timed(checkClaude), timed(checkGemini), timed(checkGrok)
     ]),
     new Promise((_, reject) => setTimeout(() => reject(new Error('Overall timeout')), 10000))
   ]).catch(() => {
     // 超时时返回全部 ERR
     const err = { code: 'ERR', ms: 0 };
-    return [err, err, err, err, err, err, err, err, err];
+    return [err, err, err, err, err, err, err, err, err, err, err, err, err, err, err, err];
   });
 
-  const [proxy, youtube, netflix, tiktok, spotify, chatgpt, claude, gemini, grok] = allChecks;
+  const [proxyYT, proxyNF, proxyTT, proxySP, proxyCG, proxyCL, proxyGM, proxyGK, youtube, netflix, tiktok, spotify, chatgpt, claude, gemini, grok] = allChecks;
   
-  const resultInfo = (result) => {
+  const resultInfo = (result, proxy) => {
     const available = result.code !== 'ERR';
     return { available, region: available ? (proxy.cc || 'XX') : '--', ms: result.ms || 0 };
   };
   
   const allServices = [
-    { name: 'YouTube', info: resultInfo(youtube) }, { name: 'Netflix', info: resultInfo(netflix) },
-    { name: 'TikTok', info: resultInfo(tiktok) }, { name: 'Spotify', info: resultInfo(spotify) },
-    { name: 'ChatGPT', info: resultInfo(chatgpt) }, { name: 'Claude', info: resultInfo(claude) },
-    { name: 'Gemini', info: resultInfo(gemini) }, { name: 'Grok', info: resultInfo(grok) }
+    { name: 'YouTube', info: resultInfo(youtube, proxyYT) }, { name: 'Netflix', info: resultInfo(netflix, proxyNF) },
+    { name: 'TikTok', info: resultInfo(tiktok, proxyTT) }, { name: 'Spotify', info: resultInfo(spotify, proxySP) },
+    { name: 'ChatGPT', info: resultInfo(chatgpt, proxyCG) }, { name: 'Claude', info: resultInfo(claude, proxyCL) },
+    { name: 'Gemini', info: resultInfo(gemini, proxyGM) }, { name: 'Grok', info: resultInfo(grok, proxyGK) }
   ];
   
   const okCount = allServices.filter(s => s.info.available).length;
