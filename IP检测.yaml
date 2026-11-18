@@ -15,7 +15,7 @@ env_schema:
 scriptings:
   - generic:
       name: "IP检测"
-      script_url: "https://raw.githubusercontent.com/wayref/Egern-Widgets/main/IP检测-模块版.js"
+      script_url: "https://cdn.jsdelivr.net/gh/wayref/Egern-Widgets@main/IP检测-模块版.js"
       timeout: 20
 
 widgets:
