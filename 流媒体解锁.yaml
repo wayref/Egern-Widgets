@@ -1,6 +1,6 @@
 name: "流媒体解锁"
 description: "检测流媒体与 AI 服务解锁状态"
-icon: "https://raw.githubusercontent.com/wayref/Egern-Icons/main/Color/Streaming.png"
+icon: "play.tv.fill"
 
 env_schema:
   REFRESH_HOURS:
