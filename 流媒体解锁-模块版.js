@@ -155,27 +155,27 @@ export default async function(ctx) {
 
   const renderMedium = () => {
     const MediumServiceBlock = (item) => ({
-      type: 'stack', direction: 'column', flex: 1, gap: 4,
+      type: 'stack', direction: 'column', flex: 1, gap: 6, justifyContent: 'center',
       children: [
-        { type: 'stack', direction: 'column', gap: 4, alignItems: 'center', children: [
+        { type: 'stack', direction: 'column', gap: 6, alignItems: 'center', children: [
           { type: 'stack', direction: 'row', alignItems: 'center', children: [
-            { type: 'stack', width: 6, height: 6, borderRadius: 3, backgroundColor: item.info.available ? C.ok : C.fail },
+            { type: 'stack', width: 7, height: 7, borderRadius: 3.5, backgroundColor: item.info.available ? C.ok : C.fail },
             { type: 'stack', width: 6 },
-            { type: 'text', text: item.name, font: { size: 11, weight: 'semibold' }, textColor: C.text, maxLines: 1 }
+            { type: 'text', text: item.name, font: { size: 13, weight: 'semibold' }, textColor: C.text, maxLines: 1 }
           ]},
           { type: 'stack', direction: 'row', alignItems: 'center', children: [
-            { type: 'text', text: `${getFlagEmoji(item.info.region)} ${item.info.region}`, font: { size: 10, weight: 'medium', design: 'monospaced' }, textColor: C.dim },
+            { type: 'text', text: `${getFlagEmoji(item.info.region)} ${item.info.region}`, font: { size: 11, weight: 'medium', design: 'monospaced' }, textColor: C.dim },
             { type: 'stack', width: 4 },
-            { type: 'text', text: `${item.info.ms}ms`, font: { size: 9, weight: 'medium', design: 'monospaced' }, textColor: responseColor(item.info.ms, item.info.available) }
+            { type: 'text', text: `${item.info.ms}ms`, font: { size: 10, weight: 'medium', design: 'monospaced' }, textColor: responseColor(item.info.ms, item.info.available) }
           ]}
         ]}
       ]
     });
     return {
-      type: 'widget', ...rootBackground(), padding: [14, 14, 14, 14], gap: 10,
+      type: 'widget', ...rootBackground(), padding: [16, 14, 16, 14], gap: 14,
       children: [
         renderHeader(),
-        { type: 'stack', direction: 'column', gap: 8, flex: 1, children: [
+        { type: 'stack', direction: 'column', gap: 16, flex: 1, justifyContent: 'center', children: [
           { type: 'stack', direction: 'row', gap: 6, flex: 1, justifyContent: 'space-between', children: allServices.slice(0, 4).map(MediumServiceBlock) },
           { type: 'stack', direction: 'row', gap: 6, flex: 1, justifyContent: 'space-between', children: allServices.slice(4, 8).map(MediumServiceBlock) }
         ]}
