@@ -1,28 +1,25 @@
-# 流媒体解锁检测
-# 检测 14 个主流流媒体与 AI 服务的解锁状态
+name: "流媒体解锁"
+description: "检测流媒体与 AI 服务解锁状态"
+icon: "https://raw.githubusercontent.com/wayref/Egern-Icons/main/Color/Streaming.png"
 
-name: 流媒体解锁
-description: 检测流媒体与 AI 服务解锁状态
-author: QT
-icon: https://raw.githubusercontent.com/wayref/Egern-Icons/main/Color/Streaming.png
-
-env:
-  - key: WIDGET_STYLE
-    type: options
-    title: 背景样式
-    description: 小组件背景样式
-    default: 纯黑背景
+env_schema:
+  REFRESH_HOURS:
+    name: 刷新间隔（小时）
+    description: 小组件刷新间隔，0.5~24 小时
+    default_value: "1"
+  WIDGET_STYLE:
+    name: 样式
+    description: 纯黑背景：不透明黑底；毛玻璃纯黑：半透明黑底；毛玻璃透明：无背景，壁纸直接透出
     options:
       - 纯黑背景
       - 毛玻璃纯黑
       - 毛玻璃透明
-  - key: REFRESH_HOURS
-    type: number
-    title: 刷新间隔（小时）
-    description: 小组件自动刷新间隔
-    default: 1
-
+    default_value: "纯黑背景"
 scriptings:
-  - name: 流媒体解锁
-    script_url: https://raw.githubusercontent.com/wayref/Egern-Widgets/main/流媒体解锁-模块版.js
-    timeout: 30
+  - generic:
+      name: "流媒体解锁"
+      script_url: "https://raw.githubusercontent.com/wayref/Egern-Widgets/main/流媒体解锁-模块版.js"
+      timeout: 30
+
+widgets:
+  - name: "流媒体解锁"
