@@ -301,24 +301,24 @@ export default async function (ctx) {
   let sizing;
   if (isLarge) {
     if (numSubs <= 2) {
-      sizing = { dotSize: 8, nameSize: "footnote", infoSize: "caption1", innerGap: 6, barHeight: 6, cardPadding: [6, 0], cardGap: 16, rootPadding: [18, 20, 14, 20], rootGap: 8, titleSize: "headline" };
+      sizing = { dotSize: 8, nameSize: "footnote", infoSize: "caption1", innerGap: 6, barHeight: 6, cardPadding: [6, 0], cardGap: 16, rootPadding: [18, 20, 14, 20], rootGap: 8, titleSize: 16 };
     } else if (numSubs === 3) {
-      sizing = { dotSize: 7, nameSize: "footnote", infoSize: "caption2", innerGap: 5, barHeight: 5, cardPadding: [4, 0], cardGap: 12, rootPadding: [16, 18, 10, 18], rootGap: 6, titleSize: "subheadline" };
+      sizing = { dotSize: 7, nameSize: "footnote", infoSize: "caption2", innerGap: 5, barHeight: 5, cardPadding: [4, 0], cardGap: 12, rootPadding: [16, 18, 10, 18], rootGap: 6, titleSize: 16 };
     } else {
-      sizing = { dotSize: 7, nameSize: "footnote", infoSize: "caption2", innerGap: 4, barHeight: 6, cardPadding: [3, 0], cardGap: 10, rootPadding: [16, 20, 12, 20], rootGap: 6, titleSize: "headline" };
+      sizing = { dotSize: 7, nameSize: "footnote", infoSize: "caption2", innerGap: 4, barHeight: 6, cardPadding: [3, 0], cardGap: 10, rootPadding: [16, 20, 12, 20], rootGap: 6, titleSize: 16 };
     }
   } else if (isMedium) {
     if (numSubs === 1) {
-      sizing = { dotSize: 8, nameSize: "subheadline", infoSize: "caption1", innerGap: 6, barHeight: 6, cardPadding: [6, 0], cardGap: 12, rootPadding: [18, 20, 14, 20], rootGap: 8, titleSize: "headline" };
+      sizing = { dotSize: 8, nameSize: "subheadline", infoSize: "caption1", innerGap: 6, barHeight: 6, cardPadding: [6, 0], cardGap: 12, rootPadding: [18, 20, 14, 20], rootGap: 8, titleSize: 16 };
     } else {
-      sizing = { dotSize: 6, nameSize: "caption2", infoSize: "caption2", innerGap: 4, barHeight: 5, cardPadding: [2, 0], cardGap: 8, rootPadding: [16, 18, 10, 18], rootGap: 5, titleSize: "subheadline" };
+      sizing = { dotSize: 6, nameSize: "caption2", infoSize: "caption2", innerGap: 4, barHeight: 5, cardPadding: [2, 0], cardGap: 8, rootPadding: [16, 18, 10, 18], rootGap: 5, titleSize: 16 };
     }
   } else {
     // 小号
     if (numSubs === 1) {
-      sizing = { dotSize: 8, nameSize: "subheadline", infoSize: "caption1", innerGap: 6, barHeight: 6, cardPadding: [8, 0], cardGap: 12, rootPadding: [18, 20, 14, 20], rootGap: 8, titleSize: "headline" };
+      sizing = { dotSize: 8, nameSize: "subheadline", infoSize: "caption1", innerGap: 6, barHeight: 6, cardPadding: [8, 0], cardGap: 12, rootPadding: [18, 20, 14, 20], rootGap: 8, titleSize: 16 };
     } else {
-      sizing = { dotSize: 6, nameSize: "caption2", infoSize: "caption2", innerGap: 4, barHeight: 5, cardPadding: [2, 0], cardGap: 8, rootPadding: [16, 18, 10, 18], rootGap: 5, titleSize: "subheadline" };
+      sizing = { dotSize: 6, nameSize: "caption2", infoSize: "caption2", innerGap: 4, barHeight: 5, cardPadding: [2, 0], cardGap: 8, rootPadding: [16, 18, 10, 18], rootGap: 5, titleSize: 16 };
     }
   }
 
