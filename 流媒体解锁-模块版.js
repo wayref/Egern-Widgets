@@ -126,9 +126,7 @@ export default async function(ctx) {
       { type: 'stack', width: 8 },
       { type: 'text', text: '流媒体解锁', font: { size: 14, weight: 'bold' }, textColor: C.text },
       { type: 'spacer' },
-      { type: 'text', text: `${okCount}/${allServices.length}`, font: { size: 12, weight: 'bold', design: 'monospaced' }, textColor: lockedCount === 0 ? C.ok : C.fail },
-      { type: 'stack', width: 8 },
-      { type: 'text', text: time, font: { size: 12, weight: 'medium', design: 'monospaced' }, textColor: C.dim }
+      { type: 'text', text: `${okCount}/${allServices.length}`, font: { size: 12, weight: 'bold', design: 'monospaced' }, textColor: lockedCount === 0 ? C.ok : C.fail }
     ]
   });
 
@@ -141,9 +139,7 @@ export default async function(ctx) {
           { type: 'stack', width: 6 },
           { type: 'text', text: '流媒体解锁', font: { size: 11, weight: 'bold' }, textColor: C.text },
           { type: 'spacer' },
-          { type: 'text', text: `${okCount}/${allServices.length}`, font: { size: 10, weight: 'bold', design: 'monospaced' }, textColor: lockedCount === 0 ? C.ok : C.fail },
-          { type: 'stack', width: 8 },
-          { type: 'text', text: time, font: { size: 10, weight: 'medium', design: 'monospaced' }, textColor: C.dim }
+          { type: 'text', text: `${okCount}/${allServices.length}`, font: { size: 10, weight: 'bold', design: 'monospaced' }, textColor: lockedCount === 0 ? C.ok : C.fail }
         ]},
         { type: 'stack', direction: 'column', flex: 1, justifyContent: 'space-between', gap: 2, children: allServices.map(item => ({
           type: 'stack', direction: 'row', alignItems: 'center', gap: 6, children: [
