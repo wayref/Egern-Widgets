@@ -17,35 +17,35 @@ env_schema:
     default_value: "纯黑背景"
   POLICY_YOUTUBE:
     name: YouTube 测试节点
-    description: YouTube 用哪个策略组测试，填策略组名如 香港智能优选，留空用默认
+    description: YouTube 用哪个策略组或节点测试，填策略组名如 香港智能优选 或节点名，留空用默认
     default_value: ""
   POLICY_NETFLIX:
     name: Netflix 测试节点
-    description: Netflix 用哪个策略组测试，填策略组名如 美国智能优选，留空用默认
+    description: Netflix 用哪个策略组或节点测试，填策略组名如 美国智能优选 或节点名，留空用默认
     default_value: ""
   POLICY_TIKTOK:
     name: TikTok 测试节点
-    description: TikTok 用哪个策略组测试，填策略组名，留空用默认
+    description: TikTok 用哪个策略组或节点测试，填策略组名或节点名，留空用默认
     default_value: ""
   POLICY_SPOTIFY:
     name: Spotify 测试节点
-    description: Spotify 用哪个策略组测试，填策略组名，留空用默认
+    description: Spotify 用哪个策略组或节点测试，填策略组名或节点名，留空用默认
     default_value: ""
   POLICY_CHATGPT:
     name: ChatGPT 测试节点
-    description: ChatGPT 用哪个策略组测试，填策略组名，留空用默认
+    description: ChatGPT 用哪个策略组或节点测试，填策略组名或节点名，留空用默认
     default_value: ""
   POLICY_CLAUDE:
     name: Claude 测试节点
-    description: Claude 用哪个策略组测试，填策略组名，留空用默认
+    description: Claude 用哪个策略组或节点测试，填策略组名或节点名，留空用默认
     default_value: ""
   POLICY_GEMINI:
     name: Gemini 测试节点
-    description: Gemini 用哪个策略组测试，填策略组名，留空用默认
+    description: Gemini 用哪个策略组或节点测试，填策略组名或节点名，留空用默认
     default_value: ""
   POLICY_GROK:
     name: Grok 测试节点
-    description: Grok 用哪个策略组测试，填策略组名，留空用默认
+    description: Grok 用哪个策略组或节点测试，填策略组名或节点名，留空用默认
     default_value: ""
 scriptings:
   - generic:
