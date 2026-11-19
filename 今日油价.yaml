@@ -18,7 +18,7 @@ env_schema:
 scriptings:
   - generic:
       name: "今日油价"
-      script_url: "https://cdn.jsdelivr.net/gh/wayref/Egern-Widgets@main/今日油价-模块版.js"
+      script_url: "https://raw.githubusercontent.com/wayref/Egern-Widgets/main/今日油价-模块版.js"
       timeout: 20
 
 widgets:
