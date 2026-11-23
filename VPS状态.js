@@ -1,7 +1,7 @@
 // ============================================================
 //  VPS 状态 · Egern 小组件
-//  通过 SSH 直连 qt-1 服务器，显示 CPU、内存、硬盘、运行时间、在线人数
-//  Env: SSH_HOST, SSH_PORT, SSH_USER, SSH_PASS, WIDGET_STYLE
+//  通过 HTTP 接口获取 qt-1 服务器状态，显示 CPU、内存、硬盘、运行时间、在线人数
+//  Env: API_URL, WIDGET_STYLE
 // ============================================================
 
 const REFRESH_MINUTES = 5;
@@ -48,103 +48,35 @@ function progressBar(percent, color) {
     direction: "row",
     height: 5,
     backgroundColor: COLORS.track,
-    borderRadius: 2.5,
+    cornerRadius: 2.5,
     children: [
-      {
-        type: "stack",
-        flex: used,
-        backgroundColor: color,
-        borderRadius: 2.5,
-        children: [],
-      },
-      {
-        type: "stack",
-        flex: rest,
-        children: [],
-      },
+      { type: "spacer", flex: used, backgroundColor: color, cornerRadius: 2.5 },
+      { type: "spacer", flex: rest },
     ],
   };
 }
-
-function statRow(icon, name, value, percent) {
-  const color = getColor(percent);
-  return {
-    type: "stack",
-    direction: "column",
-    gap: 4,
-    children: [
-      {
-        type: "stack",
-        direction: "row",
-        children: [
-          { type: "image", src: "sf-symbol:" + icon, color: COLORS.blue, width: 14, height: 14 },
-          { type: "text", text: " " + name, font: { size: 13 }, textColor: COLORS.secondary },
-          { type: "spacer" },
-          { type: "text", text: value, font: { size: 13, weight: "semibold" }, textColor: COLORS.label },
-        ],
-      },
-      progressBar(percent, color),
-    ],
-  };
-}
-
-// ======================= 背景样式（三档，Env：WIDGET_STYLE，默认纯黑背景） =======================
 
 function widgetBackground(ctx) {
-  const style = String(ctx.env?.WIDGET_STYLE || "纯黑背景").trim();
-  if (style === "毛玻璃透明") return {}; // 不设背景色，桌面壁纸直接透出
-  if (style === "毛玻璃纯黑") return { backgroundColor: "rgba(0, 0, 0, 0.55)" };
-  return { backgroundColor: "#000000" }; // 纯黑背景
+  const style = ctx.env?.WIDGET_STYLE || "纯黑背景";
+  if (style === "毛玻璃透明") {
+    return { backgroundColor: "transparent" };
+  }
+  if (style === "毛玻璃纯黑") {
+    return { backgroundColor: "#000000", opacity: 0.7 };
+  }
+  return { backgroundColor: COLORS.background };
 }
 
 async function fetchStats(ctx) {
-  const host = ctx.env?.SSH_HOST || "";
-  const port = parseInt(ctx.env?.SSH_PORT || "22", 10);
-  const username = ctx.env?.SSH_USER || "";
-  const password = ctx.env?.SSH_PASS || "";
-
-  if (!host || !username || !password) {
-    throw new Error("请填写 SSH 地址、用户名和密码");
+  const apiUrl = ctx.env?.API_URL || "https://qingtianzhuce.ccwu.cc/api/stats";
+  
+  const response = await ctx.http.get(apiUrl, { timeout: 10000 });
+  if (response.statusCode !== 200) {
+    throw new Error("接口返回 " + response.statusCode);
   }
-
-  const session = await ctx.ssh.connect({ host, port, username, password, timeout: 10000 });
-
-  try {
-    // 一次执行多个命令，用 JSON 输出方便解析
-    const cmd = `node -e "
-const os = require('os');
-const { execSync } = require('child_process');
-const cpus = os.cpus();
-const totalMem = os.totalmem();
-const freeMem = os.freemem();
-const usedMem = totalMem - freeMem;
-const uptime = os.uptime();
-const load1 = os.loadavg()[0];
-const cpuCount = cpus.length;
-const cpuPercent = Math.min(100, Math.round((load1 / cpuCount) * 100));
-let disk = { total: 0, used: 0, percent: 0 };
-try {
-  const out = execSync('df -B1 / | tail -1', { timeout: 5000 }).toString().trim().split(/\\s+/);
-  const total = parseInt(out[1], 10);
-  const used = parseInt(out[2], 10);
-  if (total > 0) disk = { total, used, percent: Math.round((used / total) * 100) };
-} catch (_) {}
-let online = 0;
-try {
-  const out = execSync(\"ss -tn state established '( dport = :25449 )' 2>/dev/null | tail -n +2 | awk '{print \\$5}' | cut -d: -f1 | sort -u\", { timeout: 5000 }).toString().trim();
-  if (out) online = out.split('\\n').filter(ip => ip && ip !== '127.0.0.1').length;
-} catch (_) {}
-console.log(JSON.stringify({ cpu: cpuPercent, cpuCount, load1: Math.round(load1 * 100) / 100, mem: { total: totalMem, used: usedMem, percent: Math.round((usedMem / totalMem) * 100) }, disk, uptime: Math.floor(uptime), online }));
-"`;
-
-    const result = await session.exec(cmd);
-    if (result.code !== 0) {
-      throw new Error("命令执行失败: " + result.stderr);
-    }
-    return JSON.parse(result.stdout);
-  } finally {
-    // SSH 会话会自动关闭
-  }
+  
+  const data = JSON.parse(response.body);
+  return data;
 }
 
 export default async function(ctx) {
@@ -164,9 +96,9 @@ export default async function(ctx) {
         {
           type: "stack",
           direction: "row",
+          alignItems: "center",
           children: [
-            { type: "image", src: "sf-symbol:server.rack", color: COLORS.red, width: 16, height: 16 },
-            { type: "text", text: " qt-1", font: { size: 16, weight: "bold" }, textColor: COLORS.label },
+            { type: "text", text: "VPS 状态", font: { size: 16, weight: "semibold" }, textColor: COLORS.label },
             { type: "spacer" },
             { type: "text", text: "离线", font: { size: 13 }, textColor: COLORS.red },
           ],
@@ -178,17 +110,14 @@ export default async function(ctx) {
     };
   }
 
-  const memUsed = formatBytes(data.mem.used);
-  const memTotal = formatBytes(data.mem.total);
-  const diskUsed = formatBytes(data.disk.used);
-  const diskTotal = formatBytes(data.disk.total);
-  const uptime = formatUptime(data.uptime);
+  const cpuPercent = data.cpu;
+  const memPercent = data.mem.percent;
+  const diskPercent = data.disk.percent;
+  const onlineCount = data.online || 0;
 
-  const family = ctx.widgetFamily;
-  const isSmall = family === "systemSmall";
+  const family = ctx.family || "systemSmall";
 
-  if (isSmall) {
-    // 小号：只显示 CPU 和内存，数值简短防溢出
+  if (family === "systemSmall") {
     return {
       type: "widget",
       ...widgetBackground(ctx),
@@ -198,24 +127,52 @@ export default async function(ctx) {
         {
           type: "stack",
           direction: "row",
+          alignItems: "center",
           children: [
-            { type: "image", src: "sf-symbol:server.rack", color: COLORS.blue, width: 16, height: 16 },
-            { type: "text", text: " qt-1", font: { size: 16, weight: "bold" }, textColor: COLORS.label },
+            { type: "text", text: "VPS 状态", font: { size: 16, weight: "semibold" }, textColor: COLORS.label },
             { type: "spacer" },
-            { type: "text", text: "● " + (data.online || 0) + "人", font: { size: 13 }, textColor: COLORS.green },
+            { type: "text", text: "● " + onlineCount + "人", font: { size: 13 }, textColor: COLORS.green },
           ],
         },
-        { type: "spacer", length: 12 },
-        statRow("cpu", "CPU", data.cpu + "%", data.cpu),
-        { type: "spacer", length: 10 },
-        statRow("memorychip", "内存", data.mem.percent + "%", data.mem.percent),
-        { type: "spacer" },
-        { type: "text", text: "运行 " + uptime, font: { size: 11 }, textColor: COLORS.weak },
+        { type: "spacer", flex: 1 },
+        {
+          type: "stack",
+          direction: "row",
+          alignItems: "center",
+          children: [
+            { type: "image", systemName: "cpu", font: { size: 13 }, tintColor: COLORS.blue },
+            { type: "text", text: " CPU", font: { size: 13 }, textColor: COLORS.secondary },
+            { type: "spacer" },
+            { type: "text", text: cpuPercent + "%", font: { size: 13, weight: "medium" }, textColor: getColor(cpuPercent) },
+          ],
+        },
+        progressBar(cpuPercent, getColor(cpuPercent)),
+        { type: "spacer", flex: 1 },
+        {
+          type: "stack",
+          direction: "row",
+          alignItems: "center",
+          children: [
+            { type: "image", systemName: "memorychip", font: { size: 13 }, tintColor: COLORS.blue },
+            { type: "text", text: " 内存", font: { size: 13 }, textColor: COLORS.secondary },
+            { type: "spacer" },
+            { type: "text", text: memPercent + "%", font: { size: 13, weight: "medium" }, textColor: getColor(memPercent) },
+          ],
+        },
+        progressBar(memPercent, getColor(memPercent)),
+        { type: "spacer", flex: 1 },
+        {
+          type: "text",
+          text: "运行 " + formatUptime(data.uptime),
+          font: { size: 12 },
+          textColor: COLORS.weak,
+          textAlign: "center",
+        },
       ],
     };
   }
 
-  // 中号和大号：显示全部
+  // 中号和大号
   return {
     type: "widget",
     ...widgetBackground(ctx),
@@ -225,28 +182,60 @@ export default async function(ctx) {
       {
         type: "stack",
         direction: "row",
+        alignItems: "center",
         children: [
-          { type: "image", src: "sf-symbol:server.rack", color: COLORS.blue, width: 16, height: 16 },
-          { type: "text", text: " qt-1 · 斯德哥尔摩", font: { size: 16, weight: "bold" }, textColor: COLORS.label },
+          { type: "image", systemName: "server.rack", font: { size: 16 }, tintColor: COLORS.blue },
+          { type: "text", text: " VPS 状态", font: { size: 16, weight: "semibold" }, textColor: COLORS.label },
           { type: "spacer" },
-          { type: "text", text: "● " + (data.online || 0) + "人在线", font: { size: 13 }, textColor: COLORS.green },
+          { type: "text", text: "● " + onlineCount + "人在线", font: { size: 13 }, textColor: COLORS.green },
         ],
       },
-      { type: "spacer", length: 14 },
-      statRow("cpu", "CPU", data.cpu + "% · " + data.cpuCount + "核 · 负载 " + data.load1, data.cpu),
-      { type: "spacer", length: 12 },
-      statRow("memorychip", "内存", memUsed + " / " + memTotal, data.mem.percent),
-      { type: "spacer", length: 12 },
-      statRow("internaldrive", "硬盘", diskUsed + " / " + diskTotal, data.disk.percent),
-      { type: "spacer" },
+      { type: "spacer", flex: 1 },
       {
         type: "stack",
         direction: "row",
+        alignItems: "center",
         children: [
-          { type: "text", text: "运行 " + uptime, font: { size: 11 }, textColor: COLORS.weak },
+          { type: "image", systemName: "cpu", font: { size: 13 }, tintColor: COLORS.blue },
+          { type: "text", text: " CPU", font: { size: 13 }, textColor: COLORS.secondary },
           { type: "spacer" },
-          { type: "text", text: "5分钟前更新", font: { size: 11 }, textColor: COLORS.weak },
+          { type: "text", text: cpuPercent + "% · " + data.cpuCount + "核 · 负载 " + data.load1, font: { size: 13, weight: "medium" }, textColor: getColor(cpuPercent) },
         ],
+      },
+      progressBar(cpuPercent, getColor(cpuPercent)),
+      { type: "spacer", flex: 1 },
+      {
+        type: "stack",
+        direction: "row",
+        alignItems: "center",
+        children: [
+          { type: "image", systemName: "memorychip", font: { size: 13 }, tintColor: COLORS.blue },
+          { type: "text", text: " 内存", font: { size: 13 }, textColor: COLORS.secondary },
+          { type: "spacer" },
+          { type: "text", text: formatBytes(data.mem.used) + " / " + formatBytes(data.mem.total), font: { size: 13, weight: "medium" }, textColor: getColor(memPercent) },
+        ],
+      },
+      progressBar(memPercent, getColor(memPercent)),
+      { type: "spacer", flex: 1 },
+      {
+        type: "stack",
+        direction: "row",
+        alignItems: "center",
+        children: [
+          { type: "image", systemName: "internaldrive", font: { size: 13 }, tintColor: COLORS.blue },
+          { type: "text", text: " 硬盘", font: { size: 13 }, textColor: COLORS.secondary },
+          { type: "spacer" },
+          { type: "text", text: formatBytes(data.disk.used) + " / " + formatBytes(data.disk.total), font: { size: 13, weight: "medium" }, textColor: getColor(diskPercent) },
+        ],
+      },
+      progressBar(diskPercent, getColor(diskPercent)),
+      { type: "spacer", flex: 1 },
+      {
+        type: "text",
+        text: "运行 " + formatUptime(data.uptime),
+        font: { size: 12 },
+        textColor: COLORS.weak,
+        textAlign: "center",
       },
     ],
   };

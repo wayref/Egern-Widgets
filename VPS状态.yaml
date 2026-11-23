@@ -1,20 +1,12 @@
 name: "VPS状态"
-description: "qt-1 服务器状态监控，通过 SSH 直连显示 CPU、内存、硬盘、运行时间、在线人数"
+description: "qt-1 服务器状态监控，通过 HTTP 接口显示 CPU、内存、硬盘、运行时间、在线人数"
 icon: "server.rack"
 
 env_schema:
-  SSH_HOST:
-    name: 服务器地址
-    description: SSH 主机地址
-  SSH_PORT:
-    name: SSH 端口
-    description: SSH 端口号
-  SSH_USER:
-    name: 用户名
-    description: SSH 登录用户名
-  SSH_PASS:
-    name: SSH 密码
-    description: SSH 登录密码（必填）
+  API_URL:
+    name: 接口地址
+    description: 服务器状态接口地址
+    default_value: "https://qingtianzhuce.ccwu.cc/api/stats"
   WIDGET_STYLE:
     name: 样式
     description: 纯黑背景：不透明黑底；毛玻璃纯黑：半透明黑底；毛玻璃透明：无背景，壁纸直接透出
@@ -22,6 +14,7 @@ env_schema:
       - 纯黑背景
       - 毛玻璃纯黑
       - 毛玻璃透明
+    default_value: "纯黑背景"
 
 scriptings:
   - generic:
