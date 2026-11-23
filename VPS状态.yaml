@@ -19,7 +19,7 @@ env_schema:
 scriptings:
   - generic:
       name: "VPS状态"
-      script_url: "https://raw.githubusercontent.com/wayref/Egern-Widgets/main/VPS状态.js"
+      script_url: "https://raw.githubusercontent.com/wayref/Egern-Widgets/main/VPS状态2.js"
       timeout: 20
 
 widgets:
