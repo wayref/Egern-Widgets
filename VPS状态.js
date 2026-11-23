@@ -98,13 +98,13 @@ function widgetBackground(ctx) {
 }
 
 async function fetchStats(ctx) {
-  const host = ctx.env?.SSH_HOST || "se-sto08.tryaltare.ai";
-  const port = parseInt(ctx.env?.SSH_PORT || "25086", 10);
-  const username = ctx.env?.SSH_USER || "root";
+  const host = ctx.env?.SSH_HOST || "";
+  const port = parseInt(ctx.env?.SSH_PORT || "22", 10);
+  const username = ctx.env?.SSH_USER || "";
   const password = ctx.env?.SSH_PASS || "";
 
-  if (!password) {
-    throw new Error("未设置 SSH 密码");
+  if (!host || !username || !password) {
+    throw new Error("请填写 SSH 地址、用户名和密码");
   }
 
   const session = await ctx.ssh.connect({ host, port, username, password, timeout: 10000 });
