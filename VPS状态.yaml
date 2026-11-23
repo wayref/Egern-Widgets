@@ -1,0 +1,11 @@
+name: VPS状态
+description: qt-1 服务器状态监控，显示 CPU、内存、硬盘、运行时间
+author: QT
+icon: https://raw.githubusercontent.com/wayref/Egern-Icons/main/Color/Server.png
+scriptings:
+  - name: VPS状态
+    type: generic
+    script_url: https://raw.githubusercontent.com/wayref/Egern-Widgets/main/VPS状态.js
+widgets:
+  - name: VPS状态
+    script_name: VPS状态
