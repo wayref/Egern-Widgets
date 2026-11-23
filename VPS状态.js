@@ -71,11 +71,11 @@ async function fetchStats(ctx) {
   const apiUrl = ctx.env?.API_URL || "https://qingtianzhuce.ccwu.cc/api/stats";
   
   const response = await ctx.http.get(apiUrl, { timeout: 10000 });
-  if (response.statusCode !== 200) {
-    throw new Error("接口返回 " + response.statusCode);
+  if (response.status !== 200) {
+    throw new Error("接口返回 " + response.status);
   }
   
-  const data = JSON.parse(response.body);
+  const data = await response.json();
   return data;
 }
 
