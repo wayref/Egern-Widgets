@@ -2,6 +2,15 @@ name: VPS状态
 description: qt-1 服务器状态监控，显示 CPU、内存、硬盘、运行时间
 author: QT
 icon: https://raw.githubusercontent.com/wayref/Egern-Icons/main/Color/Server.png
+env_schema:
+  WIDGET_STYLE:
+    name: 样式
+    description: 纯黑背景：不透明黑底；毛玻璃纯黑：半透明黑底；毛玻璃透明：无背景，壁纸直接透出
+    options:
+      - 纯黑背景
+      - 毛玻璃纯黑
+      - 毛玻璃透明
+    default_value: 纯黑背景
 scriptings:
   - name: VPS状态
     type: generic

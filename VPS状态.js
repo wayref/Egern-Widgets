@@ -91,6 +91,15 @@ function statRow(icon, name, value, percent) {
   };
 }
 
+// ======================= 背景样式（三档，Env：WIDGET_STYLE，默认纯黑背景） =======================
+
+function widgetBackground(ctx) {
+  const style = String(ctx.env?.WIDGET_STYLE || "纯黑背景").trim();
+  if (style === "毛玻璃透明") return {}; // 不设背景色，桌面壁纸直接透出
+  if (style === "毛玻璃纯黑") return { backgroundColor: "rgba(0, 0, 0, 0.55)" };
+  return { backgroundColor: "#000000" }; // 纯黑背景
+}
+
 export default async function(ctx) {
   let data = null;
   try {
@@ -100,7 +109,7 @@ export default async function(ctx) {
     // 请求失败，显示离线状态
     return {
       type: "widget",
-      backgroundColor: COLORS.background,
+      ...widgetBackground(ctx),
       padding: 16,
       refreshAfter: new Date(Date.now() + REFRESH_MINUTES * 60000).toISOString(),
       children: [
@@ -134,7 +143,7 @@ export default async function(ctx) {
     // 小号：只显示 CPU 和内存，数值简短防溢出
     return {
       type: "widget",
-      backgroundColor: COLORS.background,
+      ...widgetBackground(ctx),
       padding: 16,
       refreshAfter: new Date(Date.now() + REFRESH_MINUTES * 60000).toISOString(),
       children: [
@@ -161,7 +170,7 @@ export default async function(ctx) {
   // 中号和大号：显示全部
   return {
     type: "widget",
-    backgroundColor: COLORS.background,
+    ...widgetBackground(ctx),
     padding: 16,
     refreshAfter: new Date(Date.now() + REFRESH_MINUTES * 60000).toISOString(),
     children: [
