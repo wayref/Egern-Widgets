@@ -1,0 +1,37 @@
+name: "VPS-Status"
+description: "qt-1 服务器状态监控，通过 SSH 直连显示 CPU、内存、硬盘、运行时间、在线人数"
+icon: "server.rack"
+
+env_schema:
+  SSH_HOST:
+    name: 服务器地址
+    description: SSH 主机地址
+    default_value: "se-sto08.tryaltare.ai"
+  SSH_PORT:
+    name: SSH 端口
+    description: SSH 端口号
+    default_value: "25086"
+  SSH_USER:
+    name: 用户名
+    description: SSH 登录用户名
+    default_value: "root"
+  SSH_PASS:
+    name: SSH 密码
+    description: SSH 登录密码（必填）
+  WIDGET_STYLE:
+    name: 样式
+    description: 纯黑背景：不透明黑底；毛玻璃纯黑：半透明黑底；毛玻璃透明：无背景，壁纸直接透出
+    options:
+      - 纯黑背景
+      - 毛玻璃纯黑
+      - 毛玻璃透明
+    default_value: "纯黑背景"
+
+scriptings:
+  - generic:
+      name: "VPS-Status"
+      script_url: "https://raw.githubusercontent.com/wayref/Egern-Widgets/main/VPS-Status.js"
+      timeout: 20
+
+widgets:
+  - name: "VPS-Status"
