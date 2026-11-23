@@ -1,10 +1,8 @@
 // ============================================================
 //  VPS 状态 · Egern 小组件
-//  显示 qt-1 服务器 CPU、内存、硬盘、运行时间
-//  数据来自 qt-register 服务的 /api/stats 接口
+//  通过 SSH 直连 qt-1 服务器，显示 CPU、内存、硬盘、运行时间、在线人数
+//  Env: SSH_HOST, SSH_PORT, SSH_USER, SSH_PASS, WIDGET_STYLE
 // ============================================================
-
-const API_URL = "https://qingtianzhuce.ccwu.cc/api/stats";
 
 const REFRESH_MINUTES = 5;
 
@@ -43,7 +41,6 @@ function getColor(percent) {
 }
 
 function progressBar(percent, color) {
-  // 用 flex 按比例分：已用部分 flex=percent，未用部分 flex=100-percent
   const used = Math.max(percent, 2);
   const rest = 100 - used;
   return {
@@ -100,12 +97,63 @@ function widgetBackground(ctx) {
   return { backgroundColor: "#000000" }; // 纯黑背景
 }
 
+async function fetchStats(ctx) {
+  const host = ctx.env?.SSH_HOST || "se-sto08.tryaltare.ai";
+  const port = parseInt(ctx.env?.SSH_PORT || "25086", 10);
+  const username = ctx.env?.SSH_USER || "root";
+  const password = ctx.env?.SSH_PASS || "";
+
+  if (!password) {
+    throw new Error("未设置 SSH 密码");
+  }
+
+  const session = await ctx.ssh.connect({ host, port, username, password, timeout: 10000 });
+
+  try {
+    // 一次执行多个命令，用 JSON 输出方便解析
+    const cmd = `node -e "
+const os = require('os');
+const { execSync } = require('child_process');
+const cpus = os.cpus();
+const totalMem = os.totalmem();
+const freeMem = os.freemem();
+const usedMem = totalMem - freeMem;
+const uptime = os.uptime();
+const load1 = os.loadavg()[0];
+const cpuCount = cpus.length;
+const cpuPercent = Math.min(100, Math.round((load1 / cpuCount) * 100));
+let disk = { total: 0, used: 0, percent: 0 };
+try {
+  const out = execSync('df -B1 / | tail -1', { timeout: 5000 }).toString().trim().split(/\\s+/);
+  const total = parseInt(out[1], 10);
+  const used = parseInt(out[2], 10);
+  if (total > 0) disk = { total, used, percent: Math.round((used / total) * 100) };
+} catch (_) {}
+let online = 0;
+try {
+  const out = execSync(\"ss -tn state established '( dport = :25449 )' 2>/dev/null | tail -n +2 | awk '{print \\$5}' | cut -d: -f1 | sort -u\", { timeout: 5000 }).toString().trim();
+  if (out) online = out.split('\\n').filter(ip => ip && ip !== '127.0.0.1').length;
+} catch (_) {}
+console.log(JSON.stringify({ cpu: cpuPercent, cpuCount, load1: Math.round(load1 * 100) / 100, mem: { total: totalMem, used: usedMem, percent: Math.round((usedMem / totalMem) * 100) }, disk, uptime: Math.floor(uptime), online }));
+"`;
+
+    const result = await session.exec(cmd);
+    if (result.code !== 0) {
+      throw new Error("命令执行失败: " + result.stderr);
+    }
+    return JSON.parse(result.stdout);
+  } finally {
+    // SSH 会话会自动关闭
+  }
+}
+
 export default async function(ctx) {
   let data = null;
+  let errorMsg = "";
   try {
-    const resp = await ctx.http.get(API_URL, { timeout: 10000 });
-    data = await resp.json();
+    data = await fetchStats(ctx);
   } catch (e) {
+    errorMsg = e.message || "连接失败";
     // 请求失败，显示离线状态
     return {
       type: "widget",
@@ -124,7 +172,7 @@ export default async function(ctx) {
           ],
         },
         { type: "spacer" },
-        { type: "text", text: "无法连接服务器", font: { size: 13 }, textColor: COLORS.weak, textAlign: "center" },
+        { type: "text", text: errorMsg, font: { size: 12 }, textColor: COLORS.weak, textAlign: "center" },
         { type: "spacer" },
       ],
     };
