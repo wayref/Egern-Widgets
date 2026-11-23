@@ -140,7 +140,7 @@ export default async function(ctx) {
           direction: "row",
           alignItems: "center",
           children: [
-            { type: "image", src: "sf-symbol:cpu", font: { size: 13 }, tintColor: COLORS.blue },
+            { type: "image", src: "sf-symbol:cpu", color: "#0A84FF", width: 13, height: 13 },
             { type: "text", text: " CPU", font: { size: 13 }, textColor: COLORS.secondary },
             { type: "spacer" },
             { type: "text", text: cpuPercent + "%", font: { size: 13, weight: "medium" }, textColor: getColor(cpuPercent) },
@@ -153,7 +153,7 @@ export default async function(ctx) {
           direction: "row",
           alignItems: "center",
           children: [
-            { type: "image", src: "sf-symbol:memorychip", font: { size: 13 }, tintColor: COLORS.blue },
+            { type: "image", src: "sf-symbol:memorychip", color: "#BF5AF2", width: 13, height: 13 },
             { type: "text", text: " 内存", font: { size: 13 }, textColor: COLORS.secondary },
             { type: "spacer" },
             { type: "text", text: memPercent + "%", font: { size: 13, weight: "medium" }, textColor: getColor(memPercent) },
@@ -184,7 +184,7 @@ export default async function(ctx) {
         direction: "row",
         alignItems: "center",
         children: [
-          { type: "image", src: "sf-symbol:server.rack", font: { size: 16 }, tintColor: COLORS.blue },
+          { type: "image", src: "sf-symbol:server.rack", color: "#0A84FF", width: 16, height: 16 },
           { type: "text", text: " VPS 状态", font: { size: 16, weight: "semibold" }, textColor: COLORS.label },
           { type: "spacer" },
           { type: "text", text: "● " + onlineCount + "人在线", font: { size: 13 }, textColor: COLORS.green },
@@ -196,7 +196,7 @@ export default async function(ctx) {
         direction: "row",
         alignItems: "center",
         children: [
-          { type: "image", src: "sf-symbol:cpu", font: { size: 13 }, tintColor: COLORS.blue },
+          { type: "image", src: "sf-symbol:cpu", color: "#0A84FF", width: 13, height: 13 },
           { type: "text", text: " CPU", font: { size: 13 }, textColor: COLORS.secondary },
           { type: "spacer" },
           { type: "text", text: cpuPercent + "% · " + data.cpuCount + "核 · 负载 " + data.load1, font: { size: 13, weight: "medium" }, textColor: getColor(cpuPercent) },
@@ -209,7 +209,7 @@ export default async function(ctx) {
         direction: "row",
         alignItems: "center",
         children: [
-          { type: "image", src: "sf-symbol:memorychip", font: { size: 13 }, tintColor: COLORS.blue },
+          { type: "image", src: "sf-symbol:memorychip", color: "#BF5AF2", width: 13, height: 13 },
           { type: "text", text: " 内存", font: { size: 13 }, textColor: COLORS.secondary },
           { type: "spacer" },
           { type: "text", text: formatBytes(data.mem.used) + " / " + formatBytes(data.mem.total), font: { size: 13, weight: "medium" }, textColor: getColor(memPercent) },
@@ -222,7 +222,7 @@ export default async function(ctx) {
         direction: "row",
         alignItems: "center",
         children: [
-          { type: "image", src: "sf-symbol:internaldrive", font: { size: 13 }, tintColor: COLORS.blue },
+          { type: "image", src: "sf-symbol:internaldrive", color: "#FF9F0A", width: 13, height: 13 },
           { type: "text", text: " 硬盘", font: { size: 13 }, textColor: COLORS.secondary },
           { type: "spacer" },
           { type: "text", text: formatBytes(data.disk.used) + " / " + formatBytes(data.disk.total), font: { size: 13, weight: "medium" }, textColor: getColor(diskPercent) },
