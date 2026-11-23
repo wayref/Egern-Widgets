@@ -184,7 +184,7 @@ export default async function(ctx) {
         direction: "row",
         alignItems: "center",
         children: [
-          { type: "image", src: "sf-symbol:server.rack", color: "#0A84FF", width: 16, height: 16 },
+          { type: "image", src: "sf-symbol:externaldrive", color: "#0A84FF", width: 16, height: 16 },
           { type: "text", text: " VPS 状态", font: { size: 16, weight: "semibold" }, textColor: COLORS.label },
           { type: "spacer" },
           { type: "text", text: "● " + onlineCount + "人在线", font: { size: 13 }, textColor: COLORS.green },
